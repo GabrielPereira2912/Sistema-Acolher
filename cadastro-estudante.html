@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Cadastro do Estudante · Acolher</title>
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+<!-- Ícones reaproveitáveis: usamos <use href="#i-nome"> onde precisar -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-logo" viewBox="0 0 24 24"><path d="M19 14c1.5-1.5 3-3.2 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.8 0-3 .5-4.5 2-1.5-1.5-2.7-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4 3 5.5l7 7Z"/><path d="m9 11 3 3 4-4"/></symbol>
+    <symbol id="i-grid" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></symbol>
+    <symbol id="i-user-plus" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M19 8v6M22 11h-6"/></symbol>
+    <symbol id="i-clipboard" viewBox="0 0 24 24"><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2M9 12h6M9 16h6"/></symbol>
+    <symbol id="i-file" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><path d="M14 2v6h6M8 13h8M8 17h8"/></symbol>
+    <symbol id="i-logout" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></symbol>
+    <symbol id="i-school" viewBox="0 0 24 24"><path d="M22 10 12 5 2 10l10 5 10-5Z"/><path d="M6 12v5c3 2 9 2 12 0v-5"/></symbol>
+    <symbol id="i-users" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.9M16 3.1a4 4 0 0 1 0 7.8"/></symbol>
+  </defs>
+</svg>
+
+<div class="layout">
+
+  <!-- ============ MENU LATERAL ============ -->
+  <aside class="sidebar">
+    <div class="marca">
+      <div class="marca-icone"><svg class="icone"><use href="#i-logo"/></svg></div>
+      <div>
+        <strong>Acolher</strong>
+        <span>Psicossocial Escolar</span>
+      </div>
+    </div>
+
+    <nav class="menu">
+      <p class="menu-titulo">MENU</p>
+      <!-- As outras telas ainda não existem: os links serão ligados quando forem criadas -->
+      <a href="#" title="Em breve"><svg class="icone"><use href="#i-grid"/></svg>Dashboard</a>
+      <a href="cadastro-estudante.html" class="ativo"><svg class="icone"><use href="#i-user-plus"/></svg>Cadastro do Estudante</a>
+      <a href="#" title="Em breve"><svg class="icone"><use href="#i-clipboard"/></svg>Triagem de Demandas</a>
+      <a href="#" title="Em breve"><svg class="icone"><use href="#i-file"/></svg>Prontuários</a>
+    </nav>
+
+    <!-- Usuário logado (fixo por enquanto; virá da sessão quando existir login) -->
+    <div class="usuario">
+      <div class="avatar">ML</div>
+      <div class="usuario-info">
+        <strong>Marina Lopes</strong>
+        <span>Psicóloga · CRP 06/12345</span>
+      </div>
+      <a href="#" class="sair" title="Sair"><svg class="icone"><use href="#i-logout"/></svg></a>
+    </div>
+  </aside>
+
+  <!-- ============ CONTEÚDO ============ -->
+  <main class="conteudo">
+    <h1>Cadastro do Estudante</h1>
+    <p class="subtitulo">Registre os dados do estudante e o contexto familiar para iniciar o acolhimento.</p>
+
+    <!-- novalidate: a validação é feita pelo nosso JS (e pelo PHP), com mensagens em português -->
+    <form id="form-estudante" novalidate>
+
+      <!-- ---------- Card 1: dados pessoais e escolares ---------- -->
+      <section class="card">
+        <header class="card-topo">
+          <div class="card-icone"><svg class="icone"><use href="#i-school"/></svg></div>
+          <div>
+            <h2>Dados Pessoais e Escolares</h2>
+            <p>Identificação do estudante na unidade escolar.</p>
+          </div>
+        </header>
+
+        <div class="grade">
+          <div class="campo col-8">
+            <label for="nome_completo">Nome completo</label>
+            <input id="nome_completo" name="nome_completo" type="text" maxlength="150" placeholder="Ex.: Ana Beatriz Souza" required>
+            <small class="erro" data-erro="nome_completo"></small>
+          </div>
+
+          <div class="campo col-4">
+            <label for="matricula">Matrícula</label>
+            <input id="matricula" name="matricula" type="text" maxlength="10" inputmode="numeric" placeholder="0000-00000" required>
+            <small class="erro" data-erro="matricula"></small>
+          </div>
+
+          <div class="campo col-4">
+            <label for="data_nascimento">Data de nascimento</label>
+            <input id="data_nascimento" name="data_nascimento" type="date" required>
+            <small class="erro" data-erro="data_nascimento"></small>
+          </div>
+
+          <!-- Idade: calculada pelo JS, não vai para o banco -->
+          <div class="campo col-2">
+            <label for="idade">Idade</label>
+            <input id="idade" type="text" value="—" readonly tabindex="-1">
+          </div>
+
+          <div class="campo col-2">
+            <label for="turma_id">Turma</label>
+            <select id="turma_id" name="turma_id" required>
+              <option value="">Selecione</option>
+            </select>
+            <small class="erro" data-erro="turma_id"></small>
+          </div>
+
+          <!-- Turno e Etapa: preenchidos automaticamente a partir da turma escolhida -->
+          <div class="campo col-4">
+            <label for="turno">Turno</label>
+            <input id="turno" type="text" value="Automático" readonly tabindex="-1">
+          </div>
+
+          <div class="campo col-6">
+            <label for="etapa">Etapa de ensino</label>
+            <input id="etapa" type="text" value="Automático" readonly tabindex="-1">
+          </div>
+        </div>
+      </section>
+
+      <!-- ---------- Card 2: contexto familiar ---------- -->
+      <section class="card">
+        <header class="card-topo">
+          <div class="card-icone"><svg class="icone"><use href="#i-users"/></svg></div>
+          <div>
+            <h2>Contexto Familiar</h2>
+            <p>Responsáveis, composição familiar e rede de apoio.</p>
+          </div>
+        </header>
+
+        <div class="grade">
+          <div class="campo col-5">
+            <label for="responsavel_nome">Nome do responsável</label>
+            <input id="responsavel_nome" name="responsavel_nome" type="text" maxlength="150" placeholder="Ex.: Cláudia Souza" required>
+            <small class="erro" data-erro="responsavel_nome"></small>
+          </div>
+
+          <div class="campo col-3">
+            <label for="responsavel_parentesco">Parentesco</label>
+            <input id="responsavel_parentesco" name="responsavel_parentesco" type="text" maxlength="40" placeholder="Ex.: mãe" required>
+            <small class="erro" data-erro="responsavel_parentesco"></small>
+          </div>
+
+          <div class="campo col-4">
+            <label for="responsavel_telefone">Contato</label>
+            <input id="responsavel_telefone" name="responsavel_telefone" type="tel" maxlength="15" inputmode="numeric" placeholder="(00) 00000-0000" required>
+            <small class="erro" data-erro="responsavel_telefone"></small>
+          </div>
+
+          <div class="campo col-6">
+            <label for="composicao_familiar">Composição familiar</label>
+            <textarea id="composicao_familiar" name="composicao_familiar" rows="3" placeholder="Descreva a composição familiar..."></textarea>
+            <small class="dica">Quem reside com o estudante e grau de parentesco.</small>
+          </div>
+
+          <div class="campo col-6">
+            <label for="necessidades_apoio">Necessidades de apoio</label>
+            <textarea id="necessidades_apoio" name="necessidades_apoio" rows="3" placeholder="Descreva as necessidades..."></textarea>
+            <small class="dica">Ex.: benefícios sociais, saúde, transporte, alimentação.</small>
+          </div>
+        </div>
+      </section>
+
+      <div class="acoes">
+        <button type="button" id="btn-cancelar" class="btn btn-claro">Cancelar</button>
+        <button type="submit" id="btn-salvar" class="btn btn-escuro">Salvar e seguir para triagem</button>
+      </div>
+    </form>
+  </main>
+</div>
+
+<!-- Aviso rápido (sucesso/erro) no canto da tela -->
+<div id="aviso" class="aviso" role="status" aria-live="polite"></div>
+
+<script src="assets/js/cadastro.js"></script>
+</body>
+</html>

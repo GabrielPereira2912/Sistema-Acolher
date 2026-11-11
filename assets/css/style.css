@@ -1,0 +1,180 @@
+/* =====================================================
+   style.css — estilos compartilhados por todas as telas
+   (as próximas telas reaproveitam este mesmo arquivo)
+   ===================================================== */
+
+/* ---------- Cores e medidas em um lugar só (fácil de trocar) ---------- */
+:root {
+  --fundo: #fafafa;
+  --branco: #ffffff;
+  --texto: #111111;
+  --texto-suave: #666666;
+  --borda: #e5e5e5;
+  --escuro: #111111;
+  --erro: #c62828;
+  --sucesso: #1b7f4b;
+  --raio: 14px;
+  --largura-menu: 260px;
+}
+
+* { box-sizing: border-box; margin: 0; }
+
+body {
+  font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  font-size: 15px;
+  color: var(--texto);
+  background: var(--fundo);
+}
+
+/* ---------- Estrutura geral: menu à esquerda + conteúdo ---------- */
+.layout {
+  display: grid;
+  grid-template-columns: var(--largura-menu) 1fr;
+  min-height: 100vh;
+}
+
+.icone {
+  width: 18px; height: 18px; flex-shrink: 0;
+  fill: none; stroke: currentColor; stroke-width: 2;
+  stroke-linecap: round; stroke-linejoin: round;
+}
+
+/* ---------- Menu lateral ---------- */
+.sidebar {
+  display: flex; flex-direction: column;
+  position: sticky; top: 0; height: 100vh;
+  background: var(--fundo);
+  border-right: 1px solid var(--borda);
+}
+
+.marca {
+  display: flex; align-items: center; gap: 12px;
+  padding: 20px 22px;
+  border-bottom: 1px solid var(--borda);
+}
+.marca strong { display: block; font-size: 16px; }
+.marca span { font-size: 12px; color: var(--texto-suave); }
+.marca-icone {
+  width: 40px; height: 40px; border-radius: 12px;
+  background: var(--escuro); color: #fff;
+  display: grid; place-items: center;
+}
+
+.menu { flex: 1; padding: 20px 12px; display: flex; flex-direction: column; gap: 4px; }
+.menu-titulo { font-size: 12px; letter-spacing: .08em; color: var(--texto-suave); padding: 0 10px 8px; }
+.menu a {
+  display: flex; align-items: center; gap: 12px;
+  padding: 10px 12px; border-radius: 10px;
+  color: var(--texto-suave); text-decoration: none;
+  border: 1px solid transparent;
+}
+.menu a:hover { background: #f0f0f0; }
+.menu a.ativo { color: var(--texto); background: #f0f0f0; border-color: #cfcfcf; font-weight: 500; }
+
+.usuario {
+  display: flex; align-items: center; gap: 12px;
+  padding: 16px 18px; border-top: 1px solid var(--borda);
+}
+.avatar {
+  width: 38px; height: 38px; border-radius: 50%;
+  background: #f0f0f0; font-size: 12px; font-weight: 600;
+  display: grid; place-items: center;
+}
+.usuario-info { flex: 1; min-width: 0; line-height: 1.3; }
+.usuario-info strong { display: block; font-size: 14px; }
+.usuario-info span { font-size: 12px; color: var(--texto-suave); }
+.sair { color: var(--texto); }
+
+/* ---------- Conteúdo ---------- */
+.conteudo { padding: 40px 48px 56px; max-width: 1100px; width: 100%; }
+h1 { font-size: 28px; font-weight: 600; letter-spacing: -.01em; }
+.subtitulo { color: var(--texto-suave); margin: 6px 0 28px; }
+
+/* ---------- Cards ---------- */
+.card {
+  background: var(--branco);
+  border: 1px solid var(--borda);
+  border-radius: var(--raio);
+  margin-bottom: 24px;
+  overflow: hidden;
+}
+.card-topo {
+  display: flex; align-items: center; gap: 14px;
+  padding: 18px 22px; border-bottom: 1px solid var(--borda);
+}
+.card-topo h2 { font-size: 16px; font-weight: 600; }
+.card-topo p { font-size: 14px; color: var(--texto-suave); }
+.card-icone {
+  width: 40px; height: 40px; border-radius: 12px;
+  background: #f3f3f3; display: grid; place-items: center;
+}
+
+/* ---------- Grade de 12 colunas para os campos ---------- */
+.grade {
+  display: grid; grid-template-columns: repeat(12, 1fr);
+  gap: 18px 18px; padding: 22px;
+}
+.col-2 { grid-column: span 2; }
+.col-3 { grid-column: span 3; }
+.col-4 { grid-column: span 4; }
+.col-5 { grid-column: span 5; }
+.col-6 { grid-column: span 6; }
+.col-8 { grid-column: span 8; }
+
+/* ---------- Campos de formulário ---------- */
+.campo { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+label { font-size: 14px; font-weight: 500; }
+
+input, select, textarea {
+  font: inherit; color: inherit; width: 100%;
+  padding: 11px 12px;
+  background: var(--branco);
+  border: 1px solid var(--borda); border-radius: 10px;
+}
+textarea { resize: vertical; min-height: 84px; }
+input::placeholder, textarea::placeholder { color: #8a8a8a; }
+input:focus, select:focus, textarea:focus { outline: 2px solid #111; outline-offset: 1px; }
+input[readonly] { background: #f6f6f6; color: var(--texto-suave); cursor: default; }
+
+.dica { font-size: 12px; color: var(--texto-suave); }
+
+/* Mensagem de erro: só aparece quando o JS escreve algo nela */
+.erro { font-size: 12px; color: var(--erro); }
+.erro:empty { display: none; }
+.campo.com-erro input, .campo.com-erro select { border-color: var(--erro); }
+
+/* ---------- Botões ---------- */
+.acoes { display: flex; justify-content: flex-end; gap: 12px; }
+.btn {
+  font: inherit; font-weight: 500; cursor: pointer;
+  padding: 11px 18px; border-radius: 10px; border: 1px solid transparent;
+}
+.btn-escuro { background: var(--escuro); color: #fff; }
+.btn-escuro:hover { background: #333; }
+.btn-claro { background: var(--branco); color: var(--texto); border-color: var(--borda); }
+.btn-claro:hover { background: #f3f3f3; }
+.btn:disabled { opacity: .6; cursor: wait; }
+
+/* ---------- Aviso (toast) ---------- */
+.aviso {
+  position: fixed; right: 24px; bottom: 24px; z-index: 10;
+  max-width: 340px; padding: 14px 18px; border-radius: 12px;
+  color: #fff; font-weight: 500;
+  opacity: 0; transform: translateY(8px); pointer-events: none;
+  transition: opacity .2s, transform .2s;
+}
+.aviso.visivel { opacity: 1; transform: none; }
+.aviso.ok { background: var(--sucesso); }
+.aviso.falha { background: var(--erro); }
+
+/* ---------- Telas menores (tablet/celular) ---------- */
+@media (max-width: 860px) {
+  .layout { grid-template-columns: 1fr; }
+  .sidebar { position: static; height: auto; }
+  .menu { flex-direction: row; flex-wrap: wrap; padding: 12px; }
+  .menu-titulo, .usuario { display: none; }
+  .conteudo { padding: 24px 16px 40px; }
+  /* todos os campos ocupam a linha inteira */
+  .col-2, .col-3, .col-4, .col-5, .col-6, .col-8 { grid-column: span 12; }
+  .acoes { flex-direction: column-reverse; }
+}
