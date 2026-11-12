@@ -1,11 +1,17 @@
 <?php
 // =====================================================
+// GET  api/estudantes.php — lista de estudantes
 // POST api/estudantes.php — cadastra um estudante + responsável principal
 // Recebe JSON do front-end, valida, grava no banco e devolve JSON.
 // =====================================================
 require __DIR__ . '/conexao.php';
 
-// Esta rota só aceita POST
+// GET: lista simples de estudantes (usada para escolher qual prontuário abrir)
+if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+    responder($pdo->query('SELECT id, nome_completo, matricula FROM estudantes ORDER BY nome_completo')->fetchAll());
+}
+
+// Daqui para baixo: só aceita POST
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     responder(['erro' => 'Método não permitido.'], 405);
 }

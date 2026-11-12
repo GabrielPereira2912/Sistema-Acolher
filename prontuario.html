@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Prontuário · Acolher</title>
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+<!-- Ícones reaproveitáveis: usamos <use href="#i-nome"> onde precisar -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-logo" viewBox="0 0 24 24"><path d="M19 14c1.5-1.5 3-3.2 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.8 0-3 .5-4.5 2-1.5-1.5-2.7-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4 3 5.5l7 7Z"/><path d="m9 11 3 3 4-4"/></symbol>
+    <symbol id="i-grid" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></symbol>
+    <symbol id="i-user-plus" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M19 8v6M22 11h-6"/></symbol>
+    <symbol id="i-clipboard" viewBox="0 0 24 24"><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2M9 12h6M9 16h6"/></symbol>
+    <symbol id="i-file" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><path d="M14 2v6h6M8 13h8M8 17h8"/></symbol>
+    <symbol id="i-logout" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></symbol>
+  </defs>
+</svg>
+
+<div class="layout">
+
+  <!-- ============ MENU LATERAL ============ -->
+  <aside class="sidebar">
+    <div class="marca">
+      <div class="marca-icone"><svg class="icone"><use href="#i-logo"/></svg></div>
+      <div>
+        <strong>Acolher</strong>
+        <span>Psicossocial Escolar</span>
+      </div>
+    </div>
+
+    <nav class="menu">
+      <p class="menu-titulo">MENU</p>
+      <a href="#" title="Em breve"><svg class="icone"><use href="#i-grid"/></svg>Dashboard</a>
+      <a href="cadastro-estudante.html"><svg class="icone"><use href="#i-user-plus"/></svg>Cadastro do Estudante</a>
+      <a href="#" title="Em breve"><svg class="icone"><use href="#i-clipboard"/></svg>Triagem de Demandas</a>
+      <a href="prontuario.html" class="ativo"><svg class="icone"><use href="#i-file"/></svg>Prontuários</a>
+    </nav>
+
+    <!-- Usuário logado: preenchido pelo comum.js (carregarUsuario) -->
+    <div class="usuario">
+      <div class="avatar" id="usuario-avatar">··</div>
+      <div class="usuario-info">
+        <strong id="usuario-nome">Carregando...</strong>
+        <span id="usuario-cargo"></span>
+      </div>
+      <a href="#" class="sair" title="Sair"><svg class="icone"><use href="#i-logout"/></svg></a>
+    </div>
+  </aside>
+
+  <!-- ============ CONTEÚDO ============ -->
+  <main class="conteudo largo">
+
+    <!-- Estado 1: abriu sem ?id= -> escolher o estudante -->
+    <section id="area-seletor" class="card" hidden>
+      <header class="card-topo">
+        <div>
+          <h2>Prontuários</h2>
+          <p>Escolha o estudante para abrir o prontuário.</p>
+        </div>
+      </header>
+      <div class="grade">
+        <div class="campo col-8">
+          <label for="seletor-estudante">Estudante</label>
+          <select id="seletor-estudante"><option value="">Selecione o estudante</option></select>
+        </div>
+      </div>
+    </section>
+
+    <!-- Estado 2: id inválido ou erro -->
+    <p id="area-erro" class="vazio" hidden></p>
+
+    <!-- Estado 3: prontuário aberto -->
+    <div id="area-prontuario" hidden>
+
+      <!-- Ficha do estudante -->
+      <section class="card ficha">
+        <div class="ficha-topo">
+          <div class="avatar grande" id="ficha-avatar"></div>
+          <div>
+            <a href="prontuario.html" class="voltar">← Todos os prontuários</a>
+            <div class="ficha-nome">
+              <h1 id="ficha-nome"></h1>
+              <span class="selo" id="ficha-status"></span>
+            </div>
+            <p class="subtitulo-ficha" id="ficha-etapa"></p>
+          </div>
+        </div>
+        <dl class="ficha-dados">
+          <div><dt>Matrícula</dt><dd id="ficha-matricula"></dd></div>
+          <div><dt>Turma</dt><dd id="ficha-turma"></dd></div>
+          <div><dt>Idade</dt><dd id="ficha-idade"></dd></div>
+          <div><dt>Responsável</dt><dd id="ficha-responsavel"></dd></div>
+          <div><dt>Profissional</dt><dd id="ficha-profissional"></dd></div>
+        </dl>
+      </section>
+
+      <div class="duas-colunas">
+
+        <!-- ---------- Coluna esquerda: linha do tempo + encaminhamentos ---------- -->
+        <div>
+          <section class="card">
+            <header class="card-topo">
+              <div>
+                <h2>Linha do Tempo</h2>
+                <p id="linha-contagem"></p>
+              </div>
+            </header>
+            <ol class="linha-tempo" id="linha-tempo"></ol>
+          </section>
+
+          <section class="card">
+            <header class="card-topo">
+              <div>
+                <h2>Encaminhamentos</h2>
+                <p id="enc-contagem"></p>
+              </div>
+            </header>
+            <ul class="lista-enc" id="lista-enc"></ul>
+          </section>
+        </div>
+
+        <!-- ---------- Coluna direita: novo atendimento ---------- -->
+        <section class="card" id="card-novo">
+          <header class="card-topo">
+            <div>
+              <h2>Novo Atendimento</h2>
+              <p>Registre a intervenção realizada com o estudante.</p>
+            </div>
+          </header>
+
+          <form id="form-atendimento" novalidate>
+            <div class="grade">
+              <div class="campo col-6">
+                <label for="data_atendimento">Data</label>
+                <input id="data_atendimento" name="data_atendimento" type="date" required>
+                <small class="erro" data-erro="data_atendimento"></small>
+              </div>
+
+              <div class="campo col-6">
+                <label for="modalidade">Modalidade</label>
+                <select id="modalidade" name="modalidade" required>
+                  <option value="">Selecione</option>
+                  <option value="INDIVIDUAL">Individual</option>
+                  <option value="GRUPO">Grupo</option>
+                  <option value="FAMILIA">Família</option>
+                  <option value="PROFESSORES">Professores</option>
+                  <option value="TELEFONE">Telefone</option>
+                </select>
+                <small class="erro" data-erro="modalidade"></small>
+              </div>
+
+              <!-- Profissional: sempre o usuário logado (campo só de leitura) -->
+              <div class="campo col-6">
+                <label for="profissional">Profissional</label>
+                <input id="profissional" type="text" readonly tabindex="-1">
+              </div>
+
+              <div class="campo col-6">
+                <label for="tipo_acao_id">Tipo de intervenção</label>
+                <select id="tipo_acao_id" name="tipo_acao_id" required>
+                  <option value="">Selecione</option>
+                </select>
+                <small class="erro" data-erro="tipo_acao_id"></small>
+              </div>
+
+              <div class="campo col-12">
+                <label for="descricao">Descrição da intervenção</label>
+                <textarea id="descricao" name="descricao" rows="4" placeholder="Descreva o que foi realizado e as observações relevantes..." required></textarea>
+                <small class="erro" data-erro="descricao"></small>
+              </div>
+
+              <!-- Encaminhamento é opcional. Sem destino, o prazo fica desligado. -->
+              <div class="campo col-6">
+                <label for="destino_id">Encaminhamento</label>
+                <select id="destino_id" name="destino_id">
+                  <option value="">Sem encaminhamento</option>
+                </select>
+                <small class="erro" data-erro="destino_id"></small>
+              </div>
+
+              <div class="campo col-6">
+                <label for="prazo">Prazo do encaminhamento</label>
+                <input id="prazo" name="prazo" type="date" disabled>
+                <small class="erro" data-erro="prazo"></small>
+                <small class="dica">Data de retorno ou reavaliação.</small>
+              </div>
+            </div>
+
+            <div class="card-rodape">
+              <button type="button" id="btn-limpar" class="btn btn-claro">Limpar</button>
+              <button type="submit" id="btn-salvar" class="btn btn-escuro">Registrar atendimento</button>
+            </div>
+          </form>
+        </section>
+      </div>
+    </div>
+  </main>
+</div>
+
+<div id="aviso" class="aviso" role="status" aria-live="polite"></div>
+
+<script src="assets/js/comum.js"></script>
+<script src="assets/js/prontuario.js"></script>
+</body>
+</html>

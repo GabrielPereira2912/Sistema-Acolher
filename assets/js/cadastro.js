@@ -3,18 +3,9 @@
 // Fluxo: carrega turmas -> usuário preenche -> valida -> envia JSON para o PHP
 // =====================================================
 
-// ---------- Configurações ----------
-const API = 'api/';                        // pasta dos arquivos PHP
+// (API, TURNOS, ETAPAS, dataBR... e mostrarAviso() vêm do comum.js)
 const TELA_TRIAGEM = 'triagem-demandas.html';
 const IR_PARA_TRIAGEM = false;             // mude para true quando a tela de triagem existir
-
-// Tradução dos valores do banco (ENUM) para texto bonito
-const TURNOS = { MANHA: 'Manhã', TARDE: 'Tarde', NOITE: 'Noite' };
-const ETAPAS = {
-  FUNDAMENTAL_I: 'Ensino Fundamental I',
-  FUNDAMENTAL_II: 'Ensino Fundamental II',
-  ENSINO_MEDIO: 'Ensino Médio',
-};
 
 // ---------- Elementos da página ----------
 const form = document.getElementById('form-estudante');
@@ -54,18 +45,11 @@ campoTurma.addEventListener('change', () => {
 });
 
 // ---------- 2) Idade (calculada, nunca salva no banco) ----------
-campoNascimento.max = new Date().toISOString().split('T')[0]; // bloqueia datas futuras
+campoNascimento.max = hojeISO(); // bloqueia datas futuras
 
 campoNascimento.addEventListener('change', () => {
-  const valor = campoNascimento.value; // formato AAAA-MM-DD
-  if (!valor) { campoIdade.value = '—'; return; }
-
-  const [ano, mes, dia] = valor.split('-').map(Number);
-  const hoje = new Date();
-  let idade = hoje.getFullYear() - ano;
-  // ainda não fez aniversário este ano? tira 1
-  if (hoje.getMonth() + 1 < mes || (hoje.getMonth() + 1 === mes && hoje.getDate() < dia)) idade--;
-
+  if (!campoNascimento.value) { campoIdade.value = '—'; return; }
+  const idade = calcularIdade(campoNascimento.value);
   campoIdade.value = idade >= 0 ? `${idade} anos` : '—';
 });
 
@@ -86,61 +70,21 @@ document.getElementById('responsavel_telefone').addEventListener('input', (e) =>
   e.target.value = t;
 });
 
-// ---------- 4) Mensagens de erro e aviso ----------
-function limparErros() {
-  form.querySelectorAll('[data-erro]').forEach((el) => (el.textContent = ''));
-  form.querySelectorAll('.com-erro').forEach((el) => el.classList.remove('com-erro'));
-}
-
-// Quando o usuário mexe em um campo, o erro daquele campo some
-function limparErroDoCampo(e) {
-  const campo = e.target.closest('.campo');
-  if (!campo) return;
-  campo.classList.remove('com-erro');
-  const msg = campo.querySelector('[data-erro]');
-  if (msg) msg.textContent = '';
-}
-form.addEventListener('input', limparErroDoCampo);
-form.addEventListener('change', limparErroDoCampo);
-
-// Recebe { campo: 'mensagem' } e escreve embaixo de cada campo
-function mostrarErros(erros) {
-  Object.entries(erros).forEach(([campo, mensagem]) => {
-    const alvo = form.querySelector(`[data-erro="${campo}"]`);
-    if (alvo) {
-      alvo.textContent = mensagem;
-      alvo.closest('.campo').classList.add('com-erro');
-    }
-  });
-  // leva o foco ao primeiro campo com problema
-  const primeiro = form.querySelector('.com-erro input, .com-erro select');
-  if (primeiro) primeiro.focus();
-}
-
-let temporizador;
-function mostrarAviso(texto, sucesso = true) {
-  const aviso = document.getElementById('aviso');
-  aviso.textContent = texto;
-  aviso.className = `aviso visivel ${sucesso ? 'ok' : 'falha'}`;
-  clearTimeout(temporizador);
-  temporizador = setTimeout(() => aviso.classList.remove('visivel'), 4000);
-}
+// ---------- 4) Erros e avisos: funções prontas no comum.js ----------
+ligarLimpezaDeErros(form);
 
 // ---------- 5) Envio do formulário ----------
 form.addEventListener('submit', async (e) => {
   e.preventDefault(); // não deixa a página recarregar
-  limparErros();
+  limparErros(form);
 
   // Junta todos os campos que têm "name" em um objeto { nome: valor }
   const dados = Object.fromEntries(new FormData(form));
 
   // Validação rápida no navegador: campos obrigatórios vazios
-  const erros = {};
-  form.querySelectorAll('[required]').forEach((campo) => {
-    if (!campo.value.trim()) erros[campo.name] = 'Campo obrigatório.';
-  });
+  const erros = checarObrigatorios(form);
   if (Object.keys(erros).length) {
-    mostrarErros(erros);
+    mostrarErros(form, erros);
     return;
   }
 
@@ -161,7 +105,7 @@ form.addEventListener('submit', async (e) => {
         limparFormulario();
       }
     } else if (json.erros) {
-      mostrarErros(json.erros); // erros de validação vindos do PHP
+      mostrarErros(form, json.erros); // erros de validação vindos do PHP
     } else {
       mostrarAviso(json.erro || 'Erro ao salvar.', false);
     }
@@ -178,9 +122,10 @@ function limparFormulario() {
   campoIdade.value = '—';
   campoTurno.value = 'Automático';
   campoEtapa.value = 'Automático';
-  limparErros();
+  limparErros(form);
 }
 document.getElementById('btn-cancelar').addEventListener('click', limparFormulario);
 
 // ---------- Início ----------
+carregarUsuario(); // menu lateral
 carregarTurmas();

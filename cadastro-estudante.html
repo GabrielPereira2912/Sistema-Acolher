@@ -40,15 +40,15 @@
       <a href="#" title="Em breve"><svg class="icone"><use href="#i-grid"/></svg>Dashboard</a>
       <a href="cadastro-estudante.html" class="ativo"><svg class="icone"><use href="#i-user-plus"/></svg>Cadastro do Estudante</a>
       <a href="#" title="Em breve"><svg class="icone"><use href="#i-clipboard"/></svg>Triagem de Demandas</a>
-      <a href="#" title="Em breve"><svg class="icone"><use href="#i-file"/></svg>Prontuários</a>
+      <a href="prontuario.html"><svg class="icone"><use href="#i-file"/></svg>Prontuários</a>
     </nav>
 
-    <!-- Usuário logado (fixo por enquanto; virá da sessão quando existir login) -->
+    <!-- Usuário logado: preenchido pelo comum.js (carregarUsuario) -->
     <div class="usuario">
-      <div class="avatar">ML</div>
+      <div class="avatar" id="usuario-avatar">··</div>
       <div class="usuario-info">
-        <strong>Marina Lopes</strong>
-        <span>Psicóloga · CRP 06/12345</span>
+        <strong id="usuario-nome">Carregando...</strong>
+        <span id="usuario-cargo"></span>
       </div>
       <a href="#" class="sair" title="Sair"><svg class="icone"><use href="#i-logout"/></svg></a>
     </div>
@@ -85,7 +85,7 @@
             <small class="erro" data-erro="matricula"></small>
           </div>
 
-          <div class="campo col-4">
+          <div class="campo col-3">
             <label for="data_nascimento">Data de nascimento</label>
             <input id="data_nascimento" name="data_nascimento" type="date" required>
             <small class="erro" data-erro="data_nascimento"></small>
@@ -97,7 +97,7 @@
             <input id="idade" type="text" value="—" readonly tabindex="-1">
           </div>
 
-          <div class="campo col-2">
+          <div class="campo col-3">
             <label for="turma_id">Turma</label>
             <select id="turma_id" name="turma_id" required>
               <option value="">Selecione</option>
@@ -172,6 +172,7 @@
 <!-- Aviso rápido (sucesso/erro) no canto da tela -->
 <div id="aviso" class="aviso" role="status" aria-live="polite"></div>
 
+<script src="assets/js/comum.js"></script>
 <script src="assets/js/cadastro.js"></script>
 </body>
 </html>
