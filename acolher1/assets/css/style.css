@@ -1,0 +1,301 @@
+/* =====================================================
+   style.css — estilos compartilhados por todas as telas
+   (as próximas telas reaproveitam este mesmo arquivo)
+   ===================================================== */
+
+/* ---------- Cores e medidas em um lugar só (fácil de trocar) ---------- */
+:root {
+  --fundo: #fafafa;
+  --branco: #ffffff;
+  --texto: #111111;
+  --texto-suave: #666666;
+  --borda: #e5e5e5;
+  --escuro: #111111;
+  --erro: #c62828;
+  --sucesso: #1b7f4b;
+  --raio: 14px;
+  --largura-menu: 260px;
+}
+
+* { box-sizing: border-box; margin: 0; }
+
+body {
+  font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  font-size: 15px;
+  color: var(--texto);
+  background: var(--fundo);
+}
+
+/* ---------- Estrutura geral: menu à esquerda + conteúdo ---------- */
+.layout {
+  display: grid;
+  grid-template-columns: var(--largura-menu) minmax(0, 1fr);
+  min-height: 100vh;
+}
+
+.icone {
+  width: 18px; height: 18px; flex-shrink: 0;
+  fill: none; stroke: currentColor; stroke-width: 2;
+  stroke-linecap: round; stroke-linejoin: round;
+}
+
+/* ---------- Menu lateral ---------- */
+.sidebar {
+  display: flex; flex-direction: column;
+  position: sticky; top: 0; height: 100vh;
+  background: var(--fundo);
+  border-right: 1px solid var(--borda);
+}
+
+.marca {
+  display: flex; align-items: center; gap: 12px;
+  padding: 20px 22px;
+  border-bottom: 1px solid var(--borda);
+}
+.marca strong { display: block; font-size: 16px; }
+.marca span { font-size: 12px; color: var(--texto-suave); }
+.marca-icone {
+  width: 40px; height: 40px; border-radius: 12px;
+  background: var(--escuro); color: #fff;
+  display: grid; place-items: center;
+}
+
+.menu { flex: 1; padding: 20px 12px; display: flex; flex-direction: column; gap: 4px; }
+.menu-titulo { font-size: 12px; letter-spacing: .08em; color: var(--texto-suave); padding: 0 10px 8px; }
+.menu a {
+  display: flex; align-items: center; gap: 12px;
+  padding: 10px 12px; border-radius: 10px;
+  color: var(--texto-suave); text-decoration: none;
+  border: 1px solid transparent;
+}
+.menu a:hover { background: #f0f0f0; }
+.menu a.ativo { color: var(--texto); background: #f0f0f0; border-color: #cfcfcf; font-weight: 500; }
+
+.usuario {
+  display: flex; align-items: center; gap: 12px;
+  padding: 16px 18px; border-top: 1px solid var(--borda);
+}
+.avatar {
+  width: 38px; height: 38px; border-radius: 50%;
+  background: #f0f0f0; font-size: 12px; font-weight: 600;
+  display: grid; place-items: center;
+}
+.usuario-info { flex: 1; min-width: 0; line-height: 1.3; }
+.usuario-info strong { display: block; font-size: 14px; }
+.usuario-info span {
+  display: block; font-size: 12px; color: var(--texto-suave);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.sair { color: var(--texto); }
+
+/* ---------- Conteúdo ---------- */
+.conteudo { min-width: 0; padding: 40px 48px 56px; max-width: 1100px; width: 100%; }
+h1 { font-size: 28px; font-weight: 600; letter-spacing: -.01em; }
+.subtitulo { color: var(--texto-suave); margin: 6px 0 28px; }
+
+/* ---------- Cards ---------- */
+.card {
+  background: var(--branco);
+  border: 1px solid var(--borda);
+  border-radius: var(--raio);
+  margin-bottom: 24px;
+  overflow: hidden;
+}
+.card-topo {
+  display: flex; align-items: center; gap: 14px;
+  padding: 18px 22px; border-bottom: 1px solid var(--borda);
+}
+.card-topo h2 { font-size: 16px; font-weight: 600; }
+.card-topo p { font-size: 14px; color: var(--texto-suave); }
+.card-icone {
+  width: 40px; height: 40px; border-radius: 12px;
+  background: #f3f3f3; display: grid; place-items: center;
+}
+
+/* ---------- Grade de 12 colunas para os campos ---------- */
+.grade {
+  display: grid; grid-template-columns: repeat(12, 1fr);
+  gap: 18px 18px; padding: 22px;
+}
+.col-2 { grid-column: span 2; }
+.col-3 { grid-column: span 3; }
+.col-4 { grid-column: span 4; }
+.col-5 { grid-column: span 5; }
+.col-6 { grid-column: span 6; }
+.col-8 { grid-column: span 8; }
+
+/* ---------- Campos de formulário ---------- */
+.campo { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+label { font-size: 14px; font-weight: 500; }
+
+input, select, textarea {
+  font: inherit; color: inherit; width: 100%;
+  padding: 11px 12px;
+  background: var(--branco);
+  border: 1px solid var(--borda); border-radius: 10px;
+}
+textarea { resize: vertical; min-height: 84px; }
+
+/* Select com seta própria (igual em todos os navegadores) */
+select {
+  appearance: none; -webkit-appearance: none; cursor: pointer;
+  padding-right: 38px;
+  background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") no-repeat right 12px center / 16px;
+}
+select:disabled, input:disabled { background-color: #f6f6f6; color: #999; cursor: not-allowed; }
+input::placeholder, textarea::placeholder { color: #8a8a8a; }
+input:focus, select:focus, textarea:focus { outline: 2px solid #111; outline-offset: 1px; }
+input[readonly] { background: #f6f6f6; color: var(--texto-suave); cursor: default; }
+
+.dica { font-size: 12px; color: var(--texto-suave); }
+
+/* Mensagem de erro: só aparece quando o JS escreve algo nela */
+.erro { font-size: 12px; color: var(--erro); }
+.erro:empty { display: none; }
+.campo.com-erro input, .campo.com-erro select { border-color: var(--erro); }
+
+/* ---------- Botões ---------- */
+.acoes { display: flex; justify-content: flex-end; gap: 12px; }
+.btn {
+  font: inherit; font-weight: 500; cursor: pointer;
+  padding: 11px 18px; border-radius: 10px; border: 1px solid transparent;
+}
+.btn-escuro { background: var(--escuro); color: #fff; }
+.btn-escuro:hover { background: #333; }
+.btn-claro { background: var(--branco); color: var(--texto); border-color: var(--borda); }
+.btn-claro:hover { background: #f3f3f3; }
+.btn:disabled { opacity: .6; cursor: wait; }
+
+/* ---------- Aviso (toast) ---------- */
+.aviso {
+  position: fixed; right: 24px; bottom: 24px; z-index: 10;
+  max-width: 340px; padding: 14px 18px; border-radius: 12px;
+  color: #fff; font-weight: 500;
+  opacity: 0; transform: translateY(8px); pointer-events: none;
+  transition: opacity .2s, transform .2s;
+}
+.aviso.visivel { opacity: 1; transform: none; }
+.aviso.ok { background: var(--sucesso); }
+.aviso.falha { background: var(--erro); }
+
+/* ---------- Telas menores (tablet/celular) ---------- */
+@media (max-width: 860px) {
+  .layout { grid-template-columns: 1fr; }
+  .sidebar { position: static; height: auto; }
+  .menu { flex-direction: row; flex-wrap: wrap; padding: 12px; }
+  .menu-titulo, .usuario { display: none; }
+  .conteudo { padding: 24px 16px 40px; }
+  /* todos os campos ocupam a linha inteira */
+  .col-2, .col-3, .col-4, .col-5, .col-6, .col-8 { grid-column: span 12; }
+  .acoes { flex-direction: column-reverse; }
+}
+
+/* =====================================================
+   TELA DE PRONTUÁRIO
+   ===================================================== */
+[hidden] { display: none !important; }
+.col-12 { grid-column: span 12; }
+.conteudo.largo { max-width: 1240px; }
+
+/* ---------- Ficha do estudante ---------- */
+.ficha-topo { display: flex; align-items: center; gap: 18px; padding: 22px 24px; }
+.avatar.grande { width: 60px; height: 60px; font-size: 18px; }
+.voltar { font-size: 13px; color: var(--texto-suave); text-decoration: none; }
+.voltar:hover { color: var(--texto); }
+.ficha-nome { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin: 2px 0; }
+.ficha-nome h1 { font-size: 24px; }
+.subtitulo-ficha { color: var(--texto-suave); }
+.ficha-dados {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px;
+  padding: 16px 24px; border-top: 1px solid var(--borda); margin: 0;
+}
+.ficha-dados dt { font-size: 12px; color: var(--texto-suave); }
+.ficha-dados dd { margin: 2px 0 0; font-weight: 500; }
+
+/* Selo de status */
+.selo {
+  display: inline-block; font-size: 12px; font-weight: 500;
+  padding: 3px 10px; border-radius: 999px;
+  background: #f3f3f3; border: 1px solid var(--borda);
+}
+.selo-alerta { background: #fdecec; border-color: #f5c2c2; color: var(--erro); }
+
+/* ---------- Duas colunas ---------- */
+.duas-colunas { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr); gap: 24px; align-items: start; }
+.duas-colunas > * { min-width: 0; }
+
+/* Textos longos (nomes, descrições) quebram em vez de vazar do cartão */
+.ficha-nome h1, .ficha-dados dd, .item-titulo, .item-autor, .item-texto, .item-enc strong {
+  overflow-wrap: anywhere;
+}
+.card-rodape {
+  display: flex; justify-content: flex-end; gap: 12px;
+  padding: 16px 22px; border-top: 1px solid var(--borda); background: #fcfcfc;
+}
+
+/* ---------- Linha do tempo ---------- */
+.linha-tempo { list-style: none; padding: 22px 22px 8px 40px; margin: 0; }
+.item-tempo { position: relative; padding: 0 0 22px 18px; border-left: 2px solid var(--borda); }
+.item-tempo::before { /* bolinha */
+  content: ""; position: absolute; left: -6px; top: 2px;
+  width: 10px; height: 10px; border-radius: 50%; background: #c8c8c8;
+}
+.item-tempo:first-child::before { background: var(--escuro); } /* o mais recente fica preto */
+.item-tempo:last-child { border-left-color: transparent; }
+.item-data { display: block; font-size: 12px; color: var(--texto-suave); }
+.item-titulo { display: block; margin-top: 2px; }
+.item-autor { display: block; font-size: 13px; color: var(--texto-suave); }
+.item-texto { margin: 8px 0; line-height: 1.45; white-space: pre-line; }
+.etiqueta {
+  display: inline-block; font-size: 12px; padding: 2px 10px;
+  border: 1px solid var(--borda); border-radius: 999px; background: #fff;
+}
+.vazio { color: var(--texto-suave); padding: 6px 0 14px; }
+.linha-tempo .vazio { list-style: none; margin-left: -18px; }
+.lista-enc .vazio { list-style: none; }
+p.vazio { padding: 24px; }
+
+/* ---------- Encaminhamentos ---------- */
+.lista-enc { list-style: none; margin: 0; padding: 8px 22px 14px; }
+.item-enc {
+  display: flex; justify-content: space-between; align-items: center; gap: 12px;
+  padding: 12px 0; border-bottom: 1px solid var(--borda);
+}
+.item-enc:last-child { border-bottom: 0; }
+
+@media (max-width: 1240px) {
+  .duas-colunas { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 860px) { .col-12 { grid-column: span 12; } }
+
+/* =====================================================
+   TELA DE TRIAGEM
+   ===================================================== */
+.corpo { padding: 22px; display: flex; flex-direction: column; gap: 20px; }
+
+/* Cartões de checkbox (3 por linha) */
+.opcoes { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+.opcao {
+  display: flex; align-items: flex-start; gap: 12px;
+  padding: 14px 16px; background: var(--branco);
+  border: 1px solid var(--borda); border-radius: 12px;
+  font-weight: 400; line-height: 1.4; cursor: pointer;
+}
+.opcao:hover { background: #fafafa; }
+.opcao:has(input:checked) { border-color: var(--escuro); background: #f6f6f6; } /* marcada */
+.opcao input { width: 18px; height: 18px; padding: 0; margin-top: 2px; flex-shrink: 0; accent-color: #111; cursor: pointer; }
+.opcao span { overflow-wrap: anywhere; }
+
+/* Aviso informativo (estudante já triado) */
+.nota {
+  padding: 12px 14px; border-radius: 10px; font-size: 14px; line-height: 1.5;
+  background: #fff8e6; border: 1px solid #f0dca0;
+}
+.nota a { color: var(--texto); font-weight: 500; }
+
+/* Chips das demandas na linha do tempo do prontuário */
+.chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0; }
+.etiqueta.demanda { background: #f3f3f3; }
+
+@media (max-width: 1240px) { .opcoes { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 700px) { .opcoes { grid-template-columns: minmax(0, 1fr); } }
