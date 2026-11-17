@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Entrar · Acolher</title>
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body class="login-pagina">
+
+<main class="login-card">
+  <div class="login-marca">
+    <div class="marca-icone"><svg class="icone" viewBox="0 0 24 24"><path d="M19 14c1.5-1.5 3-3.2 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.8 0-3 .5-4.5 2-1.5-1.5-2.7-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4 3 5.5l7 7Z"/><path d="m9 11 3 3 4-4"/></svg></div>
+    <h1>Acolher</h1>
+    <p>Psicossocial Escolar</p>
+  </div>
+
+  <form id="form-login" novalidate>
+    <div class="campo">
+      <label for="email">E-mail</label>
+      <input id="email" name="email" type="email" autocomplete="username" placeholder="nome@escola.com.br" autofocus>
+    </div>
+
+    <div class="campo">
+      <label for="senha">Senha</label>
+      <input id="senha" name="senha" type="password" autocomplete="current-password" placeholder="Sua senha">
+    </div>
+
+    <!-- Mensagem de erro do login (lida por leitores de tela) -->
+    <p class="login-erro" id="login-erro" role="alert" hidden></p>
+
+    <button type="submit" id="btn-entrar" class="btn btn-escuro">Entrar</button>
+  </form>
+
+  <p class="login-aviso">Acesso restrito à equipe técnica da escola.</p>
+</main>
+
+<script src="assets/js/login.js"></script>
+</body>
+</html>

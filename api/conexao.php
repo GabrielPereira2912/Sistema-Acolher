@@ -10,10 +10,9 @@ $banco   = 'acolher';
 $usuario = 'root';
 $senha   = '';
 
-// TEMPORÁRIO: enquanto não existe a tela de login, todo registro é feito
-// como o usuário 1 (Marina Lopes, dos dados de teste).
-// Quando o login existir, trocar por $_SESSION['usuario_id'].
-define('USUARIO_LOGADO_ID', 1);
+// Tempo máximo sem usar o sistema: depois disso é preciso entrar de novo
+// (importante em computador compartilhado da escola).
+define('TEMPO_SESSAO', 1800); // 30 minutos, em segundos
 
 // O XAMPP costuma vir com outro fuso horário: fixamos o do Brasil.
 // Sem isso, "hoje" no PHP pode ser diferente de "hoje" no navegador.
@@ -22,6 +21,21 @@ date_default_timezone_set('America/Sao_Paulo');
 // Erros do PHP NÃO podem aparecer na resposta (quebrariam o JSON).
 // Eles ficam no log do Apache: xampp/apache/logs/error.log
 ini_set('display_errors', '0');
+
+// Sessão: guarda quem está logado no servidor. O cookie fica protegido:
+//  - httponly: o JavaScript da página não consegue ler;
+//  - samesite Lax: não é enviado em requisições vindas de outros sites.
+if (PHP_SAPI !== 'cli') { // no terminal (scripts/criar_usuario.php) não há sessão
+    session_name('ACOLHERSESS');
+    session_set_cookie_params([
+        'lifetime' => 0,                                  // some ao fechar o navegador
+        'path'     => '/',
+        'httponly' => true,
+        'samesite' => 'Lax',
+        'secure'   => !empty($_SERVER['HTTPS']),          // exige HTTPS quando o site usa HTTPS
+    ]);
+    session_start();
+}
 
 // Toda resposta da API é JSON e não deve ficar guardada em cache (dados sensíveis)
 header('Content-Type: application/json; charset=utf-8');
@@ -58,16 +72,42 @@ try {
 }
 
 // Devolve o usuário logado (nome, perfil, registro de classe).
-// Quando existir login, só muda a constante USUARIO_LOGADO_ID.
+// TODA rota da API (menos login e logout) começa chamando esta função:
+// sem login válido, ela responde 401 e o resto do arquivo nem executa.
 function usuarioLogado($pdo)
 {
+    $id = $_SESSION['usuario_id'] ?? null;
+    if (!$id) {
+        responder(['erro' => 'Faça login para continuar.'], 401);
+    }
+
+    // Ficou parado tempo demais? Derruba a sessão.
+    if (time() - ($_SESSION['ultimo_acesso'] ?? 0) > TEMPO_SESSAO) {
+        encerrarSessao();
+        responder(['erro' => 'Sua sessão expirou. Entre novamente.'], 401);
+    }
+
+    // Confere no banco a cada requisição: se o usuário foi desativado, perde o acesso na hora.
     $stmt = $pdo->prepare('SELECT id, nome, perfil, registro_classe FROM usuarios WHERE id = ? AND ativo = 1');
-    $stmt->execute([USUARIO_LOGADO_ID]);
+    $stmt->execute([$id]);
     $usuario = $stmt->fetch();
     if (!$usuario) {
-        responder(['erro' => 'Usuário não encontrado.'], 401);
+        encerrarSessao();
+        responder(['erro' => 'Faça login para continuar.'], 401);
     }
+
+    $_SESSION['ultimo_acesso'] = time(); // usou agora: renova o relógio dos 30 minutos
     return $usuario;
+}
+
+// Apaga a sessão no servidor e o cookie no navegador (usada no logout e na expiração)
+function encerrarSessao()
+{
+    $_SESSION = [];
+    setcookie(session_name(), '', [
+        'expires' => time() - 3600, 'path' => '/', 'httponly' => true, 'samesite' => 'Lax',
+    ]);
+    session_destroy();
 }
 
 // Confere se um texto é uma data AAAA-MM-DD válida

@@ -10,7 +10,7 @@ Importar na ordem: `sql/banco_acolher_v3.sql` e depois `sql/dados_teste.sql`.
 | Prontuário (linha do tempo) | lê a view `linha_do_tempo` | A etiqueta de cada item mostra a **modalidade** (Individual, Telefone...). |
 | Prontuário (Novo Atendimento) | grava `atendimentos` e, se houver, 1 `encaminhamentos` | **Profissional** = usuário logado (campo fixo). Encaminhamento = escolher destino + prazo; o responsável é o próprio usuário logado. |
 | Dashboard (`index.html`) | lê a view `painel_estudantes` e faz COUNT para os cards | Cards: acompanhados (`EM_ACOMPANHAMENTO`), triagens pendentes (sem acolhimento registrado), aguardando 1º atendimento (triado, sem atendimentos), atendimentos do mês e encaminhamentos abertos (com aviso dos vencidos). Aluno sem atendimento mostra a data de cadastro e quem cadastrou. |
-| Login (ainda não existe no wireframe) | lê `usuarios` | Por enquanto tudo é gravado como usuário 1 (`USUARIO_LOGADO_ID` em `api/conexao.php`). |
+| Login | lê `usuarios`; grava `LOGIN` em `log_acessos` | Sessão PHP (cookie `ACOLHERSESS`, HttpOnly, SameSite=Lax). Todas as APIs exigem login (401 sem sessão). Expira após 30 min parado. Mensagem de erro igual para e-mail inexistente, senha errada e usuário desativado. |
 
 ## Mudanças no banco v2 -> v3 (só duas, nenhuma tabela nova)
 1. View `linha_do_tempo` passou a trazer a coluna `modalidade`.
@@ -50,3 +50,17 @@ Ordem de importação: `banco_acolher_v3.sql` -> `dados_teste.sql` -> `dados_fic
 - A lista é paginada: **10 estudantes por página** (constante `POR_PAGINA` em `dashboard.js`). O rodapé só aparece se houver mais de 10. Qualquer busca volta para a página 1.
 - No celular (até 700px) a tabela vira uma lista de cartões, sem rolagem lateral.
 - Se o servidor falhar, a lista mostra o erro com o botão "Tentar novamente".
+
+
+## Login (como usar)
+
+- Abra `http://localhost/acolher/login.html`. Qualquer outra página sem login volta para cá e, depois de entrar, retorna à página pedida.
+- Usuários de teste (dados_teste.sql): `marina@escola.test` (psicóloga) e `ricardo@escola.test` (assistente social). Senha dos dois: `teste123`.
+- **Criar o primeiro ADMIN** (não existe no seed): no terminal, na pasta do projeto, rode `C:\xampp\php\php.exe scripts\criar_usuario.php` (Windows/XAMPP) ou `php scripts/criar_usuario.php`. A senha vira hash; nunca fica em texto no banco. O script só roda pelo terminal.
+- Botão **Sair** (rodapé do menu) encerra a sessão.
+- Para trocar o tempo de expiração: constante `TEMPO_SESSAO` em `api/conexao.php`.
+
+### Limites conhecidos (protótipo)
+- Não há bloqueio por tentativas (só um atraso de 0,4 s a cada erro). Em produção, criar uma tabela de tentativas.
+- Em produção usar HTTPS (o cookie já vira `Secure` sozinho quando o site usa HTTPS).
+- Ainda não existe tela para cadastrar/desativar usuários: use o script ou o phpMyAdmin (`ativo = 0`).

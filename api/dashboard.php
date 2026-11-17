@@ -6,7 +6,7 @@
 // =====================================================
 require __DIR__ . '/conexao.php';
 
-usuarioLogado($pdo); // garante que há usuário válido (depois: exige login)
+usuarioLogado($pdo); // exige login
 
 // ---------- Cards ----------
 // Estudantes em acompanhamento (conta por status)

@@ -4,6 +4,7 @@
 // Usada para preencher o <select> de Turma no cadastro.
 // =====================================================
 require __DIR__ . '/conexao.php';
+usuarioLogado($pdo); // exige login
 
 $stmt = $pdo->prepare(
     'SELECT id, nome, turno, etapa_ensino

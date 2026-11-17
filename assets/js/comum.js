@@ -5,6 +5,19 @@
 
 const API = 'api/'; // pasta dos arquivos PHP
 
+// Envolve o fetch: se QUALQUER chamada da API responder 401 (sem login ou sessão expirada),
+// manda para a tela de login e, depois de entrar, volta para a página em que estava.
+const fetchOriginal = window.fetch.bind(window);
+window.fetch = async (...args) => {
+  const resp = await fetchOriginal(...args);
+  if (resp.status === 401) {
+    const atual = location.pathname.split('/').pop() + location.search;
+    location.replace('login.html?next=' + encodeURIComponent(atual));
+    return new Promise(() => {}); // não segue o código da página: ela já está saindo
+  }
+  return resp;
+};
+
 // ---------- Tradução dos valores do banco (ENUM) para texto bonito ----------
 const TURNOS = { MANHA: 'Manhã', TARDE: 'Tarde', NOITE: 'Noite' };
 const ETAPAS = {
@@ -128,9 +141,21 @@ async function carregarUsuario() {
     const campoCargo = document.getElementById('usuario-cargo');
     campoCargo.textContent = cargo;
     campoCargo.title = cargo; // mostra completo ao passar o mouse (o texto pode ser cortado com ...)
+    ligarBotaoSair();
     return u;
   } catch (e) {
     mostrarAviso('Não foi possível identificar o usuário.', false);
     return null;
   }
+}
+
+// ---------- Botão Sair (menu lateral) ----------
+function ligarBotaoSair() {
+  const sair = document.querySelector('.sair');
+  if (!sair) return;
+  sair.addEventListener('click', async (ev) => {
+    ev.preventDefault();
+    try { await fetchOriginal(API + 'logout.php', { method: 'POST' }); } catch (e) { /* sai mesmo assim */ }
+    location.replace('login.html');
+  });
 }

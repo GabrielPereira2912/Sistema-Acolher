@@ -6,6 +6,8 @@
 // =====================================================
 require __DIR__ . '/conexao.php';
 
+$usuario = usuarioLogado($pdo); // exige login (e dá o id de quem está cadastrando)
+
 // GET: lista simples de estudantes (usada para escolher qual prontuário abrir)
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     // tem_acolhimento = 1 se o estudante já passou pela triagem (usado na tela de Triagem)
@@ -111,7 +113,7 @@ try {
         $nome, $matricula, $nascimento, $turmaId,
         $composicao !== '' ? $composicao : null,   // campos opcionais vazios viram NULL
         $apoio      !== '' ? $apoio      : null,
-        USUARIO_LOGADO_ID,
+        $usuario['id'],
     ]);
     $estudanteId = (int) $pdo->lastInsertId();
 
@@ -126,7 +128,7 @@ try {
     $stmt = $pdo->prepare(
         "INSERT INTO log_acessos (usuario_id, acao, estudante_id) VALUES (?, 'CRIOU', ?)"
     );
-    $stmt->execute([USUARIO_LOGADO_ID, $estudanteId]);
+    $stmt->execute([$usuario['id'], $estudanteId]);
 
     $pdo->commit();
 } catch (Throwable $e) {
