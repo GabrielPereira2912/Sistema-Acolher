@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dashboard · Acolher</title>
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+<!-- Ícones reaproveitáveis: usamos <use href="#i-nome"> onde precisar -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-logo" viewBox="0 0 24 24"><path d="M19 14c1.5-1.5 3-3.2 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.8 0-3 .5-4.5 2-1.5-1.5-2.7-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4 3 5.5l7 7Z"/><path d="m9 11 3 3 4-4"/></symbol>
+    <symbol id="i-grid" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></symbol>
+    <symbol id="i-user-plus" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M19 8v6M22 11h-6"/></symbol>
+    <symbol id="i-clipboard" viewBox="0 0 24 24"><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2M9 12h6M9 16h6"/></symbol>
+    <symbol id="i-file" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><path d="M14 2v6h6M8 13h8M8 17h8"/></symbol>
+    <symbol id="i-logout" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></symbol>
+    <symbol id="i-chevron" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></symbol>
+  </defs>
+</svg>
+
+<div class="layout">
+
+  <!-- ============ MENU LATERAL ============ -->
+  <aside class="sidebar">
+    <div class="marca">
+      <div class="marca-icone"><svg class="icone"><use href="#i-logo"/></svg></div>
+      <div>
+        <strong>Acolher</strong>
+        <span>Psicossocial Escolar</span>
+      </div>
+    </div>
+
+    <nav class="menu">
+      <p class="menu-titulo">MENU</p>
+      <a href="index.html" class="ativo"><svg class="icone"><use href="#i-grid"/></svg>Dashboard</a>
+      <a href="cadastro-estudante.html"><svg class="icone"><use href="#i-user-plus"/></svg>Cadastro do Estudante</a>
+      <a href="triagem-demandas.html"><svg class="icone"><use href="#i-clipboard"/></svg>Triagem de Demandas</a>
+      <a href="prontuario.html"><svg class="icone"><use href="#i-file"/></svg>Prontuários</a>
+    </nav>
+
+    <!-- Usuário logado: preenchido pelo comum.js (carregarUsuario) -->
+    <div class="usuario">
+      <div class="avatar" id="usuario-avatar">··</div>
+      <div class="usuario-info">
+        <strong id="usuario-nome">Carregando...</strong>
+        <span id="usuario-cargo"></span>
+      </div>
+      <a href="#" class="sair" title="Sair"><svg class="icone"><use href="#i-logout"/></svg></a>
+    </div>
+  </aside>
+
+  <!-- ============ CONTEÚDO ============ -->
+  <main class="conteudo largo">
+
+    <div class="topo-pagina">
+      <div>
+        <h1>Dashboard</h1>
+        <p class="subtitulo">Visão geral dos estudantes em acompanhamento psicossocial.</p>
+      </div>
+      <a href="cadastro-estudante.html" class="btn btn-escuro">
+        <svg class="icone"><use href="#i-plus"/></svg>Novo Estudante/Acolhimento
+      </a>
+    </div>
+
+    <!-- ---------- 4 indicadores (preenchidos pelo JS) ---------- -->
+    <section class="cards-resumo" aria-label="Indicadores">
+      <div class="card indicador">
+        <span class="indicador-rotulo">Estudantes acompanhados</span>
+        <strong class="indicador-valor" id="card-acompanhados">–</strong>
+      </div>
+      <div class="card indicador">
+        <span class="indicador-rotulo">Triagens pendentes</span>
+        <strong class="indicador-valor" id="card-triagens">–</strong>
+      </div>
+      <div class="card indicador">
+        <span class="indicador-rotulo">Aguardando 1º atendimento</span>
+        <strong class="indicador-valor" id="card-aguardando">–</strong>
+      </div>
+      <div class="card indicador">
+        <span class="indicador-rotulo">Atendimentos no mês</span>
+        <strong class="indicador-valor" id="card-atendimentos">–</strong>
+      </div>
+      <div class="card indicador">
+        <span class="indicador-rotulo">Encaminhamentos em aberto</span>
+        <strong class="indicador-valor" id="card-enc-abertos">–</strong>
+        <!-- Só aparece quando há encaminhamento aberto com prazo vencido -->
+        <span class="indicador-alerta" id="card-enc-vencidos" hidden></span>
+      </div>
+    </section>
+
+    <!-- ---------- Lista de estudantes ---------- -->
+    <section class="card">
+      <header class="card-topo entre">
+        <h2>Estudantes</h2>
+        <div class="busca">
+          <svg class="icone"><use href="#i-search"/></svg>
+          <input id="busca" type="search" placeholder="Buscar por nome, turma ou profissional..." autocomplete="off" aria-label="Buscar estudantes">
+        </div>
+      </header>
+
+      <div class="tabela-rolagem">
+        <table class="tabela">
+          <thead>
+            <tr>
+              <th>Nome</th>
+              <th>Turma</th>
+              <th>Último Atendimento</th>
+              <th>Profissional Responsável</th>
+              <th class="col-seta"><span class="so-leitor">Abrir</span></th>
+            </tr>
+          </thead>
+          <tbody id="lista-estudantes">
+            <tr><td colspan="5" class="vazio">Carregando...</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Paginação: só aparece quando há mais estudantes do que cabe em uma página -->
+      <footer class="paginacao" id="paginacao" hidden>
+        <span id="pag-info"></span>
+        <div class="pag-botoes">
+          <button type="button" class="btn btn-claro" id="pag-anterior">Anterior</button>
+          <span id="pag-numero"></span>
+          <button type="button" class="btn btn-claro" id="pag-proximo">Próxima</button>
+        </div>
+      </footer>
+    </section>
+  </main>
+</div>
+
+<div id="aviso" class="aviso" role="status" aria-live="polite"></div>
+
+<script src="assets/js/comum.js"></script>
+<script src="assets/js/dashboard.js"></script>
+</body>
+</html>

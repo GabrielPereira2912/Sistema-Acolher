@@ -9,7 +9,7 @@ Importar na ordem: `sql/banco_acolher_v3.sql` e depois `sql/dados_teste.sql`.
 | Triagem de Demandas | grava `acolhimentos` + `acolhimento_demandas` | 7 categorias vindas do banco (inclui **Outras** + campo de especificação). Data = hoje, profissional = usuário logado. |
 | Prontuário (linha do tempo) | lê a view `linha_do_tempo` | A etiqueta de cada item mostra a **modalidade** (Individual, Telefone...). |
 | Prontuário (Novo Atendimento) | grava `atendimentos` e, se houver, 1 `encaminhamentos` | **Profissional** = usuário logado (campo fixo). Encaminhamento = escolher destino + prazo; o responsável é o próprio usuário logado. |
-| Dashboard | lê a view `painel_estudantes` e cards de COUNT | Sem mudança. Aluno sem atendimento mostra a data de cadastro e quem cadastrou. |
+| Dashboard (`index.html`) | lê a view `painel_estudantes` e faz COUNT para os cards | Cards: acompanhados (`EM_ACOMPANHAMENTO`), triagens pendentes (sem acolhimento registrado), aguardando 1º atendimento (triado, sem atendimentos), atendimentos do mês e encaminhamentos abertos (com aviso dos vencidos). Aluno sem atendimento mostra a data de cadastro e quem cadastrou. |
 | Login (ainda não existe no wireframe) | lê `usuarios` | Por enquanto tudo é gravado como usuário 1 (`USUARIO_LOGADO_ID` em `api/conexao.php`). |
 
 ## Mudanças no banco v2 -> v3 (só duas, nenhuma tabela nova)
@@ -39,3 +39,14 @@ Ordem de importação: `banco_acolher_v3.sql` -> `dados_teste.sql` -> `dados_fic
 - Registrar a triagem **não** muda o status: o estudante continua em `TRIAGEM` até o 1º atendimento, quando vira `EM_ACOMPANHAMENTO`.
 - No prontuário, o item "Acolhimento inicial" mostra as demandas marcadas como etiquetas.
 - Perfil `ADMIN` não registra triagem.
+
+## Regras do Dashboard (`index.html`, a página inicial)
+- A lista mostra todos os estudantes, do registro mais recente para o mais antigo. Clicar na linha abre o prontuário.
+- A busca ignora acentos e maiúsculas e procura em nome, turma e profissional ("julia" encontra "Júlia").
+- "Atendimentos no mês" conta do dia 1 ao último dia do mês atual. "Triagens pendentes" são os estudantes em `TRIAGEM` que **ainda não têm triagem registrada** (sem acolhimento). Quem já foi triado e espera o 1º atendimento não conta.
+- "Aguardando 1º atendimento" conta quem **já tem triagem** e ainda não teve nenhum atendimento (status `TRIAGEM` + acolhimento + zero atendimentos). Ao registrar o 1º atendimento o aluno sai deste card e passa a contar em "Estudantes acompanhados".
+- Se houver encaminhamento aberto com prazo vencido, o card mostra "N com prazo vencido" em vermelho.
+- No prontuário, o botão "Voltar ao dashboard" leva para `index.html`.
+- A lista é paginada: **10 estudantes por página** (constante `POR_PAGINA` em `dashboard.js`). O rodapé só aparece se houver mais de 10. Qualquer busca volta para a página 1.
+- No celular (até 700px) a tabela vira uma lista de cartões, sem rolagem lateral.
+- Se o servidor falhar, a lista mostra o erro com o botão "Tentar novamente".

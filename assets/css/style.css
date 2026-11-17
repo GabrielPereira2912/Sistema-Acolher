@@ -180,7 +180,7 @@ input[readonly] { background: #f6f6f6; color: var(--texto-suave); cursor: defaul
 
 /* ---------- Telas menores (tablet/celular) ---------- */
 @media (max-width: 860px) {
-  .layout { grid-template-columns: 1fr; }
+  .layout { grid-template-columns: minmax(0, 1fr); } /* minmax: a coluna pode encolher (a tabela rola por dentro) */
   .sidebar { position: static; height: auto; }
   .menu { flex-direction: row; flex-wrap: wrap; padding: 12px; }
   .menu-titulo, .usuario { display: none; }
@@ -299,3 +299,84 @@ p.vazio { padding: 24px; }
 
 @media (max-width: 1240px) { .opcoes { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 700px) { .opcoes { grid-template-columns: minmax(0, 1fr); } }
+
+/* =====================================================
+   DASHBOARD
+   ===================================================== */
+.topo-pagina { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; flex-wrap: wrap; }
+.topo-pagina .btn { margin-bottom: 24px; } /* respiro quando o botão desce para baixo do título (celular) */
+a.btn { display: inline-flex; align-items: center; gap: 8px; text-decoration: none; }
+
+/* ---------- 4 indicadores ---------- */
+.cards-resumo { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 16px; margin-bottom: 24px; }
+.cards-resumo .card { margin-bottom: 0; }
+.indicador { padding: 18px 20px; display: flex; flex-direction: column; gap: 6px; }
+.indicador-rotulo { color: var(--texto-suave); font-size: 14px; line-height: 1.3; min-height: 2.6em; } /* 2 linhas reservadas: os números ficam alinhados entre os cards */
+.indicador-valor { font-size: 36px; font-weight: 600; line-height: 1.1; }
+.indicador-alerta { font-size: 13px; font-weight: 500; color: var(--erro); }
+
+/* ---------- Cabeçalho do cartão com busca ---------- */
+.card-topo.entre { justify-content: space-between; flex-wrap: wrap; }
+.busca { position: relative; flex: 1 1 280px; max-width: 420px; }
+.busca .icone { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--texto-suave); pointer-events: none; }
+.busca input { padding-left: 42px; }
+
+/* ---------- Tabela ---------- */
+.tabela-rolagem { overflow-x: auto; position: relative; } /* position: prende o texto escondido (.so-leitor) aqui dentro */
+.tabela { width: 100%; min-width: 720px; border-collapse: collapse; }
+.tabela th {
+  text-align: left; font-weight: 500; font-size: 14px;
+  padding: 16px 22px; border-bottom: 1px solid var(--borda);
+}
+.tabela td { padding: 16px 22px; border-bottom: 1px solid var(--borda); vertical-align: middle; }
+.tabela tbody tr:last-child td { border-bottom: 0; }
+.tabela td:nth-child(2), .tabela td:nth-child(3) { white-space: nowrap; } /* turma e data não quebram */
+.linha-clicavel { cursor: pointer; }
+.linha-clicavel:hover { background: #fafafa; }
+.nome-aluno a { display: block; color: var(--texto); font-weight: 500; text-decoration: none; margin-bottom: 6px; overflow-wrap: anywhere; }
+.nome-aluno a:hover { text-decoration: underline; }
+.col-seta { width: 48px; text-align: right; color: var(--texto-suave); }
+.tabela td.vazio { text-align: center; padding: 32px 22px; color: var(--texto-suave); }
+.so-leitor { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); } /* só para leitores de tela */
+
+/* Selo "Triagem" fica só com contorno, como no wireframe */
+.selo-triagem { background: #fff; }
+
+@media (max-width: 1240px) { .cards-resumo { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (max-width: 760px) { .cards-resumo { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 560px) { .cards-resumo { grid-template-columns: minmax(0, 1fr); } }
+
+/* ---------- Dashboard: paginação, foco e celular ---------- */
+.paginacao {
+  display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap;
+  padding: 14px 22px; border-top: 1px solid var(--borda); font-size: 14px; color: var(--texto-suave);
+}
+.pag-botoes { display: flex; align-items: center; gap: 12px; }
+.pag-botoes .btn { padding: 8px 14px; }
+
+/* Quem navega por teclado vê qual linha está em foco */
+.linha-clicavel:focus-within { background: #f3f3f3; }
+.nome-aluno a:focus-visible { outline: 2px solid #111; outline-offset: 2px; border-radius: 4px; }
+.tabela td.vazio .btn { margin-left: 8px; }
+
+/* Celular: cada estudante vira um "cartãozinho" (nada de rolar para o lado) */
+@media (max-width: 700px) {
+  .tabela { min-width: 0; }
+  .tabela thead { display: none; }
+  .tabela, .tabela tbody { display: block; }
+  .tabela tr { display: block; padding: 14px 22px; border-bottom: 1px solid var(--borda); }
+  .tabela tbody tr:last-child { border-bottom: 0; }
+  .tabela td { display: block; padding: 0; border: 0; }
+  .tabela td.nome-aluno { margin-bottom: 8px; }
+  .tabela td[data-label] {
+    display: flex; justify-content: space-between; gap: 16px;
+    padding: 3px 0; font-size: 14px; white-space: normal;
+  }
+  .tabela td[data-label]::before { content: attr(data-label); color: var(--texto-suave); }
+  .tabela td.col-seta { display: none; }
+  .tabela td.vazio { text-align: center; padding: 20px 0; }
+  .paginacao { flex-direction: column; align-items: stretch; text-align: center; }
+  .pag-botoes { justify-content: space-between; }
+}
+
+@media (max-width: 560px) { .indicador-rotulo { min-height: 0; } }
