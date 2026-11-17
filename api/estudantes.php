@@ -8,7 +8,13 @@ require __DIR__ . '/conexao.php';
 
 // GET: lista simples de estudantes (usada para escolher qual prontuário abrir)
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-    responder($pdo->query('SELECT id, nome_completo, matricula FROM estudantes ORDER BY nome_completo')->fetchAll());
+    // tem_acolhimento = 1 se o estudante já passou pela triagem (usado na tela de Triagem)
+    responder($pdo->query(
+        'SELECT e.id, e.nome_completo, e.matricula,
+                CASE WHEN EXISTS (SELECT 1 FROM acolhimentos a WHERE a.estudante_id = e.id) THEN 1 ELSE 0 END AS tem_acolhimento
+           FROM estudantes e
+          ORDER BY e.nome_completo'
+    )->fetchAll());
 }
 
 // Daqui para baixo: só aceita POST

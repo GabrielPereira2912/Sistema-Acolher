@@ -251,7 +251,8 @@ input[readonly] { background: #f6f6f6; color: var(--texto-suave); cursor: defaul
   border: 1px solid var(--borda); border-radius: 999px; background: #fff;
 }
 .vazio { color: var(--texto-suave); padding: 6px 0 14px; }
-.linha-tempo .vazio, .lista-enc .vazio { list-style: none; margin-left: -18px; }
+.linha-tempo .vazio { list-style: none; margin-left: -18px; }
+.lista-enc .vazio { list-style: none; }
 p.vazio { padding: 24px; }
 
 /* ---------- Encaminhamentos ---------- */
@@ -266,3 +267,35 @@ p.vazio { padding: 24px; }
   .duas-colunas { grid-template-columns: minmax(0, 1fr); }
 }
 @media (max-width: 860px) { .col-12 { grid-column: span 12; } }
+
+/* =====================================================
+   TELA DE TRIAGEM
+   ===================================================== */
+.corpo { padding: 22px; display: flex; flex-direction: column; gap: 20px; }
+
+/* Cartões de checkbox (3 por linha) */
+.opcoes { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+.opcao {
+  display: flex; align-items: flex-start; gap: 12px;
+  padding: 14px 16px; background: var(--branco);
+  border: 1px solid var(--borda); border-radius: 12px;
+  font-weight: 400; line-height: 1.4; cursor: pointer;
+}
+.opcao:hover { background: #fafafa; }
+.opcao:has(input:checked) { border-color: var(--escuro); background: #f6f6f6; } /* marcada */
+.opcao input { width: 18px; height: 18px; padding: 0; margin-top: 2px; flex-shrink: 0; accent-color: #111; cursor: pointer; }
+.opcao span { overflow-wrap: anywhere; }
+
+/* Aviso informativo (estudante já triado) */
+.nota {
+  padding: 12px 14px; border-radius: 10px; font-size: 14px; line-height: 1.5;
+  background: #fff8e6; border: 1px solid #f0dca0;
+}
+.nota a { color: var(--texto); font-weight: 500; }
+
+/* Chips das demandas na linha do tempo do prontuário */
+.chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0; }
+.etiqueta.demanda { background: #f3f3f3; }
+
+@media (max-width: 1240px) { .opcoes { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 700px) { .opcoes { grid-template-columns: minmax(0, 1fr); } }

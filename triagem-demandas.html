@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Triagem de Demandas · Acolher</title>
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+<!-- Ícones reaproveitáveis: usamos <use href="#i-nome"> onde precisar -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-logo" viewBox="0 0 24 24"><path d="M19 14c1.5-1.5 3-3.2 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.8 0-3 .5-4.5 2-1.5-1.5-2.7-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4 3 5.5l7 7Z"/><path d="m9 11 3 3 4-4"/></symbol>
+    <symbol id="i-grid" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></symbol>
+    <symbol id="i-user-plus" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M19 8v6M22 11h-6"/></symbol>
+    <symbol id="i-clipboard" viewBox="0 0 24 24"><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2M9 12h6M9 16h6"/></symbol>
+    <symbol id="i-file" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><path d="M14 2v6h6M8 13h8M8 17h8"/></symbol>
+    <symbol id="i-logout" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></symbol>
+  </defs>
+</svg>
+
+<div class="layout">
+
+  <!-- ============ MENU LATERAL ============ -->
+  <aside class="sidebar">
+    <div class="marca">
+      <div class="marca-icone"><svg class="icone"><use href="#i-logo"/></svg></div>
+      <div>
+        <strong>Acolher</strong>
+        <span>Psicossocial Escolar</span>
+      </div>
+    </div>
+
+    <nav class="menu">
+      <p class="menu-titulo">MENU</p>
+      <a href="#" title="Em breve"><svg class="icone"><use href="#i-grid"/></svg>Dashboard</a>
+      <a href="cadastro-estudante.html"><svg class="icone"><use href="#i-user-plus"/></svg>Cadastro do Estudante</a>
+      <a href="triagem-demandas.html" class="ativo"><svg class="icone"><use href="#i-clipboard"/></svg>Triagem de Demandas</a>
+      <a href="prontuario.html"><svg class="icone"><use href="#i-file"/></svg>Prontuários</a>
+    </nav>
+
+    <!-- Usuário logado: preenchido pelo comum.js (carregarUsuario) -->
+    <div class="usuario">
+      <div class="avatar" id="usuario-avatar">··</div>
+      <div class="usuario-info">
+        <strong id="usuario-nome">Carregando...</strong>
+        <span id="usuario-cargo"></span>
+      </div>
+      <a href="#" class="sair" title="Sair"><svg class="icone"><use href="#i-logout"/></svg></a>
+    </div>
+  </aside>
+
+  <!-- ============ CONTEÚDO ============ -->
+  <main class="conteudo">
+    <h1>Identificação de Demandas</h1>
+    <p class="subtitulo">Triagem inicial: selecione todas as demandas observadas ou relatadas.</p>
+
+    <!-- novalidate: a validação é feita pelo nosso JS (e pelo PHP), com mensagens em português -->
+    <form id="form-triagem" novalidate>
+
+      <!-- ---------- Card 1: estudante ---------- -->
+      <section class="card">
+        <div class="grade">
+          <div class="campo col-8">
+            <label for="estudante_id">Estudante</label>
+            <select id="estudante_id" name="estudante_id" required>
+              <option value="">Selecione o estudante</option>
+            </select>
+            <small class="erro" data-erro="estudante_id"></small>
+          </div>
+
+          <!-- Aparece quando o estudante escolhido já foi triado -->
+          <div id="nota-triado" class="nota col-12" hidden>
+            Este estudante já tem triagem registrada.
+            <a id="link-prontuario" href="prontuario.html">Abrir o prontuário</a> para registrar novos atendimentos.
+          </div>
+        </div>
+      </section>
+
+      <!-- ---------- Card 2: demandas ---------- -->
+      <section class="card" id="card-demandas">
+        <header class="card-topo">
+          <div>
+            <h2>Demandas identificadas</h2>
+            <p id="contador">Seleção múltipla · 0 de 0 selecionadas</p>
+          </div>
+        </header>
+
+        <div class="corpo">
+          <!-- Checkboxes montados pelo JS a partir da tabela categorias_demanda -->
+          <div class="campo">
+            <div class="opcoes" id="opcoes"></div>
+            <small class="erro" data-erro="categorias"></small>
+          </div>
+
+          <!-- Só aparece se "Outras" estiver marcada -->
+          <div class="campo" id="campo-outras" hidden>
+            <label for="outras_especificacao">Especifique a demanda "Outras"</label>
+            <input id="outras_especificacao" name="outras_especificacao" type="text" maxlength="255" placeholder="Ex.: Mudança recente de bairro e de escola">
+            <small class="erro" data-erro="outras_especificacao"></small>
+          </div>
+
+          <div class="campo">
+            <label for="descricao_complementar">Descrição complementar da demanda</label>
+            <textarea id="descricao_complementar" name="descricao_complementar" rows="9" placeholder="Descreva a situação com o máximo de detalhes relevantes..." required></textarea>
+            <small class="erro" data-erro="descricao_complementar"></small>
+            <small class="dica">Registre o relato, quem identificou a demanda e o contexto observado.</small>
+          </div>
+        </div>
+      </section>
+
+      <div class="acoes">
+        <button type="button" id="btn-cancelar" class="btn btn-claro">Cancelar</button>
+        <button type="submit" id="btn-salvar" class="btn btn-escuro">Registrar triagem</button>
+      </div>
+    </form>
+  </main>
+</div>
+
+<div id="aviso" class="aviso" role="status" aria-live="polite"></div>
+
+<script src="assets/js/comum.js"></script>
+<script src="assets/js/triagem.js"></script>
+</body>
+</html>

@@ -81,7 +81,7 @@ async function carregarProntuario(recarga = false) {
     }
 
     desenharFicha(dados.estudante);
-    desenharLinhaDoTempo(dados.linha_do_tempo);
+    desenharLinhaDoTempo(dados.linha_do_tempo, dados.demandas);
     desenharEncaminhamentos(dados.encaminhamentos);
     preencherSelect('tipo_acao_id', dados.tipos_acao, 'Selecione');
     preencherSelect('destino_id', dados.destinos, 'Sem encaminhamento', (d) => `${d.nome} (${d.natureza === 'INTERNO' ? 'interno' : 'externo'})`);
@@ -108,7 +108,7 @@ function desenharFicha(e) {
 }
 
 // Linha do tempo: um item por acolhimento/atendimento, do mais novo ao mais antigo
-function desenharLinhaDoTempo(itens) {
+function desenharLinhaDoTempo(itens, demandas = []) {
   const lista = document.getElementById('linha-tempo');
   lista.replaceChildren();
   document.getElementById('linha-contagem').textContent =
@@ -128,6 +128,16 @@ function desenharLinhaDoTempo(itens) {
       criar('p', 'item-texto', i.descricao || 'Sem descrição.')
     );
     if (i.modalidade) li.appendChild(criar('span', 'etiqueta', MODALIDADES[i.modalidade]));
+
+    // Só o acolhimento não tem modalidade: nele mostramos as demandas marcadas na triagem
+    if (!i.modalidade && demandas.length) {
+      const chips = criar('div', 'chips');
+      demandas.forEach((d) => {
+        // "Outras" mostra o texto que o profissional especificou
+        chips.appendChild(criar('span', 'etiqueta demanda', d.especificacao ? `Outras: ${d.especificacao}` : d.nome));
+      });
+      li.appendChild(chips);
+    }
     lista.appendChild(li);
   });
 }

@@ -5,7 +5,7 @@
 
 // (API, TURNOS, ETAPAS, dataBR... e mostrarAviso() vêm do comum.js)
 const TELA_TRIAGEM = 'triagem-demandas.html';
-const IR_PARA_TRIAGEM = false;             // mude para true quando a tela de triagem existir
+const IR_PARA_TRIAGEM = true;              // depois de salvar, abre a triagem do aluno recém-cadastrado
 
 // ---------- Elementos da página ----------
 const form = document.getElementById('form-estudante');

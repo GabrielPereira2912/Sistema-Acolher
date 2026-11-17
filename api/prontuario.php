@@ -50,6 +50,19 @@ $stmt = $pdo->prepare(
 $stmt->execute([$id]);
 $linha = $stmt->fetchAll();
 
+// Demandas marcadas na triagem. A especificação só existe para a categoria "Outras".
+$stmt = $pdo->prepare(
+    'SELECT c.nome,
+            CASE WHEN c.exige_especificacao = 1 THEN a.outras_especificacao END AS especificacao
+       FROM acolhimentos a
+       JOIN acolhimento_demandas ad ON ad.acolhimento_id = a.id
+       JOIN categorias_demanda c    ON c.id = ad.categoria_id
+      WHERE a.estudante_id = ?
+      ORDER BY c.id'
+);
+$stmt->execute([$id]);
+$demandas = $stmt->fetchAll();
+
 // ---------- 3) Encaminhamentos do estudante (abertos primeiro) ----------
 $stmt = $pdo->prepare(
     "SELECT d.nome AS destino, d.natureza, en.prazo, en.status, u.nome AS responsavel
@@ -77,6 +90,7 @@ if (empty($_GET['recarga'])) {
 responder([
     'estudante'       => $estudante,
     'linha_do_tempo'  => $linha,
+    'demandas'        => $demandas,
     'encaminhamentos' => $encaminhamentos,
     'tipos_acao'      => $tipos,
     'destinos'        => $destinos,
