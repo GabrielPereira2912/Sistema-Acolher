@@ -5,11 +5,16 @@
 // Recebe JSON do front-end, valida, grava no banco e devolve JSON.
 // =====================================================
 require __DIR__ . '/conexao.php';
+require __DIR__ . '/regras_estudante.php';
 
 $usuario = usuarioLogado($pdo); // exige login (e dá o id de quem está cadastrando)
 
 // GET: lista simples de estudantes (usada para escolher qual prontuário abrir)
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+    // Esta lista serve só para escolher prontuário/triagem: o administrador não usa
+    if ($usuario['perfil'] === 'ADMIN') {
+        responder(['erro' => 'Seu perfil não tem acesso a esta lista.'], 403);
+    }
     // tem_acolhimento = 1 se o estudante já passou pela triagem (usado na tela de Triagem)
     responder($pdo->query(
         'SELECT e.id, e.nome_completo, e.matricula,
@@ -31,48 +36,21 @@ if (!is_array($d)) {
 }
 
 // ---------- 1) Limpar os dados recebidos ----------
-$nome       = trim($d['nome_completo'] ?? '');
-$matricula  = trim($d['matricula'] ?? '');
-$nascimento = trim($d['data_nascimento'] ?? '');
-$turmaId    = (int) ($d['turma_id'] ?? 0);
-$respNome   = trim($d['responsavel_nome'] ?? '');
-$respParent = trim($d['responsavel_parentesco'] ?? '');
-$respTel    = preg_replace('/\D/', '', $d['responsavel_telefone'] ?? ''); // só números
+// Os campos comuns (nome, matrícula, turma, responsável...) e as regras deles
+// ficam em regras_estudante.php, porque a edição do ADMIN usa as mesmas.
+$e = lerDadosEstudante($d);
+$nome       = $e['nome'];
+$matricula  = $e['matricula'];
+$nascimento = $e['nascimento'];
+$turmaId    = $e['turmaId'];
+$respNome   = $e['respNome'];
+$respParent = $e['respParent'];
+$respTel    = $e['respTel'];
 $composicao = trim($d['composicao_familiar'] ?? '');
 $apoio      = trim($d['necessidades_apoio'] ?? '');
 
 // ---------- 2) Validar (o front valida por conforto; AQUI é a validação que vale) ----------
-$erros = [];
-
-if (mb_strlen($nome) < 3) {
-    $erros['nome_completo'] = 'Informe o nome completo.';
-}
-
-if (!preg_match('/^\d{4}-\d{5}$/', $matricula)) {
-    $erros['matricula'] = 'Use o formato 0000-00000.';
-}
-
-$data = DateTime::createFromFormat('Y-m-d', $nascimento);
-if (!$data || $data->format('Y-m-d') !== $nascimento) {
-    $erros['data_nascimento'] = 'Informe uma data válida.';
-} elseif ($data > new DateTime('today')) {
-    $erros['data_nascimento'] = 'A data não pode ser no futuro.';
-}
-
-if ($turmaId <= 0) {
-    $erros['turma_id'] = 'Selecione a turma.';
-}
-
-if (mb_strlen($respNome) < 3) {
-    $erros['responsavel_nome'] = 'Informe o nome do responsável.';
-}
-if ($respParent === '') {
-    $erros['responsavel_parentesco'] = 'Informe o parentesco.';
-}
-if (strlen($respTel) < 10 || strlen($respTel) > 11) {
-    $erros['responsavel_telefone'] = 'Informe um telefone com DDD.';
-}
-
+$erros = validarDadosEstudante($e);
 if ($erros) {
     responder(['erros' => $erros], 422);
 }
@@ -92,10 +70,7 @@ if ($stmt->fetch()) {
     responder(['erros' => ['matricula' => 'Esta matrícula já está cadastrada.']], 409);
 }
 
-// Telefone no formato (00) 00000-0000 para guardar e exibir
-$telefone = strlen($respTel) === 11
-    ? sprintf('(%s) %s-%s', substr($respTel, 0, 2), substr($respTel, 2, 5), substr($respTel, 7))
-    : sprintf('(%s) %s-%s', substr($respTel, 0, 2), substr($respTel, 2, 4), substr($respTel, 6));
+$telefone = telefoneFormatado($respTel);
 
 // ---------- 4) Gravar ----------
 // Transação: ou grava tudo (estudante + responsável + log), ou não grava nada.

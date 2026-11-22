@@ -12,6 +12,11 @@ if ($id <= 0) {
 
 $usuario = usuarioLogado($pdo);
 
+// Privacidade: o administrador cuida do sistema, mas NÃO lê prontuários (só a equipe técnica)
+if ($usuario['perfil'] === 'ADMIN') {
+    responder(['erro' => 'Seu perfil não tem acesso aos prontuários.'], 403);
+}
+
 // ---------- 1) Ficha do estudante (+ turma, que tem turno e etapa) ----------
 $stmt = $pdo->prepare(
     'SELECT e.id, e.nome_completo, e.matricula, e.data_nascimento, e.status,

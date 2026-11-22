@@ -18,8 +18,11 @@ let filtrados = [];   // lista depois da busca
 let pagina = 1;       // página atual (começa em 1)
 
 // ---------- Início ----------
+let podeAbrirProntuario = true; // administrador vê a lista, mas não abre prontuários
+
 async function iniciar() {
-  carregarUsuario(); // menu lateral
+  const usuario = await carregarUsuario(); // menu lateral
+  podeAbrirProntuario = !usuario || usuario.perfil !== 'ADMIN';
 
   try {
     const resp = await fetch(API + 'dashboard.php');
@@ -97,16 +100,23 @@ function desenharTabela() {
   const inicio = (pagina - 1) * POR_PAGINA;
   filtrados.slice(inicio, inicio + POR_PAGINA).forEach((e) => {
     const destino = `prontuario.html?id=${e.estudante_id}`;
-    const tr = criar('tr', 'linha-clicavel');
+    const tr = criar('tr', podeAbrirProntuario ? 'linha-clicavel' : '');
 
-    // Coluna 1: nome (link, para funcionar com teclado) + selo do status
+    // Coluna 1: nome (link para quem pode abrir o prontuário; texto simples para o administrador)
     const tdNome = criar('td', 'nome-aluno');
-    const link = criar('a', '', e.nome_completo);
-    link.href = destino;
-    tdNome.append(link, criar('span', `selo selo-${e.status.toLowerCase()}`, STATUS_ESTUDANTE[e.status]));
+    if (podeAbrirProntuario) {
+      const link = criar('a', '', e.nome_completo);
+      link.href = destino;
+      tdNome.append(link);
+    } else {
+      tdNome.append(criar('strong', 'nome-simples', e.nome_completo));
+    }
+    tdNome.append(criar('span', `selo selo-${e.status.toLowerCase()}`, STATUS_ESTUDANTE[e.status]));
 
     const tdSeta = criar('td', 'col-seta');
-    tdSeta.innerHTML = '<svg class="icone"><use href="#i-chevron"/></svg>'; // ícone fixo nosso (sem dados do usuário)
+    if (podeAbrirProntuario) {
+      tdSeta.innerHTML = '<svg class="icone"><use href="#i-chevron"/></svg>'; // ícone fixo nosso (sem dados do usuário)
+    }
 
     tr.append(
       tdNome,
@@ -117,9 +127,11 @@ function desenharTabela() {
     );
 
     // A linha inteira é clicável (o link cobre quem usa teclado ou abre em nova aba)
-    tr.addEventListener('click', (ev) => {
-      if (!ev.target.closest('a')) location.href = destino;
-    });
+    if (podeAbrirProntuario) {
+      tr.addEventListener('click', (ev) => {
+        if (!ev.target.closest('a')) location.href = destino;
+      });
+    }
     corpoTabela.appendChild(tr);
   });
 }

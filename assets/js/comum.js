@@ -142,9 +142,11 @@ async function carregarUsuario() {
     campoCargo.textContent = cargo;
     campoCargo.title = cargo; // mostra completo ao passar o mouse (o texto pode ser cortado com ...)
     ligarBotaoSair();
+    ajustarMenu(u.perfil);
     return u;
   } catch (e) {
     mostrarAviso('Não foi possível identificar o usuário.', false);
+    document.querySelector('.menu')?.classList.add('pronto');
     return null;
   }
 }
@@ -158,4 +160,47 @@ function ligarBotaoSair() {
     try { await fetchOriginal(API + 'logout.php', { method: 'POST' }); } catch (e) { /* sai mesmo assim */ }
     location.replace('login.html');
   });
+}
+
+// ---------- Menu por perfil ----------
+// ADMIN: Dashboard, Cadastro do Estudante, Estudantes, Usuários e Minha conta (não vê triagem nem prontuários).
+// Profissionais: tudo, menos Estudantes e Usuários.
+// O menu fica invisível (CSS) até este ajuste, para não "piscar" itens que o perfil não pode usar.
+function ajustarMenu(perfil) {
+  const ehAdmin = perfil === 'ADMIN';
+  document.getElementById('menu-usuarios')?.toggleAttribute('hidden', !ehAdmin);
+  document.getElementById('menu-estudantes')?.toggleAttribute('hidden', !ehAdmin);
+  document.querySelectorAll('a[href="triagem-demandas.html"], a[href="prontuario.html"]')
+    .forEach((a) => a.toggleAttribute('hidden', ehAdmin));
+  document.querySelector('.menu')?.classList.add('pronto');
+}
+
+// Páginas só da equipe técnica chamam isto: o administrador volta para o Dashboard.
+function bloquearAdmin(usuario) {
+  if (usuario && usuario.perfil === 'ADMIN') {
+    location.replace('index.html');
+    return true;
+  }
+  return false;
+}
+
+// ---------- Máscaras de digitação (usadas no cadastro e na edição de estudante) ----------
+// Matrícula: 0000-00000
+function ligarMascaraMatricula(campo) {
+  campo.addEventListener('input', () => {
+    const n = campo.value.replace(/\D/g, '').slice(0, 9);
+    campo.value = n.length > 4 ? `${n.slice(0, 4)}-${n.slice(4)}` : n;
+  });
+}
+
+// Telefone: (00) 00000-0000 (aceita fixo de 10 dígitos também)
+function formatarTelefone(texto) {
+  const n = (texto || '').replace(/\D/g, '').slice(0, 11);
+  if (n.length > 10) return `(${n.slice(0, 2)}) ${n.slice(2, 7)}-${n.slice(7)}`;
+  if (n.length > 6) return `(${n.slice(0, 2)}) ${n.slice(2, 6)}-${n.slice(6)}`;
+  if (n.length > 2) return `(${n.slice(0, 2)}) ${n.slice(2)}`;
+  return n;
+}
+function ligarMascaraTelefone(campo) {
+  campo.addEventListener('input', () => { campo.value = formatarTelefone(campo.value); });
 }

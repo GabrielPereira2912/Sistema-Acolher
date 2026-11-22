@@ -53,22 +53,9 @@ campoNascimento.addEventListener('change', () => {
   campoIdade.value = idade >= 0 ? `${idade} anos` : '—';
 });
 
-// ---------- 3) Máscaras (formatam enquanto digita) ----------
-// Matrícula: 0000-00000
-document.getElementById('matricula').addEventListener('input', (e) => {
-  const n = e.target.value.replace(/\D/g, '').slice(0, 9);
-  e.target.value = n.length > 4 ? `${n.slice(0, 4)}-${n.slice(4)}` : n;
-});
-
-// Telefone: (00) 00000-0000 (aceita fixo de 10 dígitos também)
-document.getElementById('responsavel_telefone').addEventListener('input', (e) => {
-  const n = e.target.value.replace(/\D/g, '').slice(0, 11);
-  let t = n;
-  if (n.length > 10) t = `(${n.slice(0, 2)}) ${n.slice(2, 7)}-${n.slice(7)}`;
-  else if (n.length > 6) t = `(${n.slice(0, 2)}) ${n.slice(2, 6)}-${n.slice(6)}`;
-  else if (n.length > 2) t = `(${n.slice(0, 2)}) ${n.slice(2)}`;
-  e.target.value = t;
-});
+// ---------- 3) Máscaras (formatam enquanto digita; funções no comum.js) ----------
+ligarMascaraMatricula(document.getElementById('matricula'));
+ligarMascaraTelefone(document.getElementById('responsavel_telefone'));
 
 // ---------- 4) Erros e avisos: funções prontas no comum.js ----------
 ligarLimpezaDeErros(form);
@@ -99,7 +86,7 @@ form.addEventListener('submit', async (e) => {
 
     if (resp.ok) {
       mostrarAviso('Estudante cadastrado com sucesso!');
-      if (IR_PARA_TRIAGEM) {
+      if (IR_PARA_TRIAGEM && perfilAtual !== 'ADMIN') { // administrador não faz triagem: continua no cadastro
         window.location.href = `${TELA_TRIAGEM}?estudante=${json.id}`;
       } else {
         limparFormulario();
@@ -127,5 +114,6 @@ function limparFormulario() {
 document.getElementById('btn-cancelar').addEventListener('click', limparFormulario);
 
 // ---------- Início ----------
-carregarUsuario(); // menu lateral
+let perfilAtual = null; // perfil de quem está logado (decide o que acontece depois de salvar)
+carregarUsuario().then((u) => { if (u) perfilAtual = u.perfil; }); // menu lateral
 carregarTurmas();

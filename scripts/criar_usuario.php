@@ -48,6 +48,7 @@ $confirma = perguntar('Repita a senha:');
 if ($esconder) { shell_exec('stty echo'); echo "\n"; }
 
 if (mb_strlen($senha) < 8) exit("A senha precisa ter pelo menos 8 caracteres.\n");
+if (strlen($senha) > 72) exit("A senha pode ter no máximo 72 caracteres.\n");
 if ($senha !== $confirma) exit("As senhas não conferem.\n");
 
 $pdo->prepare('INSERT INTO usuarios (nome, email, senha_hash, perfil, registro_classe) VALUES (?, ?, ?, ?, ?)')

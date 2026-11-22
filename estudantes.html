@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Estudantes · Acolher</title>
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+<!-- Ícones reaproveitáveis: usamos <use href="#i-nome"> onde precisar -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-logo" viewBox="0 0 24 24"><path d="M19 14c1.5-1.5 3-3.2 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.8 0-3 .5-4.5 2-1.5-1.5-2.7-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4 3 5.5l7 7Z"/><path d="m9 11 3 3 4-4"/></symbol>
+    <symbol id="i-grid" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></symbol>
+    <symbol id="i-user-plus" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M19 8v6M22 11h-6"/></symbol>
+    <symbol id="i-clipboard" viewBox="0 0 24 24"><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2M9 12h6M9 16h6"/></symbol>
+    <symbol id="i-file" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><path d="M14 2v6h6M8 13h8M8 17h8"/></symbol>
+    <symbol id="i-logout" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></symbol>
+    <symbol id="i-users" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.9M16 3.1a4 4 0 0 1 0 7.8"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></symbol>
+    <symbol id="i-key" viewBox="0 0 24 24"><circle cx="8" cy="15" r="4"/><path d="m10.8 12.2 9.2-9.2M16 7l3 3M14 9l2 2"/></symbol>
+    <symbol id="i-school" viewBox="0 0 24 24"><path d="m22 10-10-5-10 5 10 5 10-5Z"/><path d="M6 12v5c0 1 2.7 3 6 3s6-2 6-3v-5M22 10v6"/></symbol>
+  </defs>
+</svg>
+
+<div class="layout">
+
+  <!-- ============ MENU LATERAL ============ -->
+  <aside class="sidebar">
+    <div class="marca">
+      <div class="marca-icone"><svg class="icone"><use href="#i-logo"/></svg></div>
+      <div>
+        <strong>Acolher</strong>
+        <span>Psicossocial Escolar</span>
+      </div>
+    </div>
+
+    <nav class="menu">
+      <p class="menu-titulo">MENU</p>
+      <a href="index.html"><svg class="icone"><use href="#i-grid"/></svg>Dashboard</a>
+      <a href="cadastro-estudante.html"><svg class="icone"><use href="#i-user-plus"/></svg>Cadastro do Estudante</a>
+      <a href="triagem-demandas.html"><svg class="icone"><use href="#i-clipboard"/></svg>Triagem de Demandas</a>
+      <a href="prontuario.html"><svg class="icone"><use href="#i-file"/></svg>Prontuários</a>
+      <a href="estudantes.html" id="menu-estudantes" hidden class="ativo"><svg class="icone"><use href="#i-school"/></svg>Estudantes</a>
+      <a href="usuarios.html" id="menu-usuarios" hidden><svg class="icone"><use href="#i-users"/></svg>Usuários</a>
+      <a href="minha-conta.html"><svg class="icone"><use href="#i-key"/></svg>Minha conta</a>
+    </nav>
+
+    <!-- Usuário logado: preenchido pelo comum.js (carregarUsuario) -->
+    <div class="usuario">
+      <div class="avatar" id="usuario-avatar">··</div>
+      <div class="usuario-info">
+        <strong id="usuario-nome">Carregando...</strong>
+        <span id="usuario-cargo"></span>
+      </div>
+      <a href="#" class="sair" title="Sair"><svg class="icone"><use href="#i-logout"/></svg></a>
+    </div>
+  </aside>
+
+  <!-- ============ CONTEÚDO ============ -->
+  <main class="conteudo largo">
+    <h1>Estudantes</h1>
+    <p class="subtitulo">Corrija dados de identificação, turma e responsável. Prontuários e dados de atendimento não aparecem aqui.</p>
+
+    <section class="card">
+      <header class="card-topo entre">
+        <div>
+          <h2>Estudantes cadastrados</h2>
+          <p id="estudantes-contagem"></p>
+        </div>
+        <div class="filtros-lista">
+          <div class="busca">
+            <svg class="icone"><use href="#i-search"/></svg>
+            <input id="busca" type="search" placeholder="Buscar por nome, matrícula ou responsável..." autocomplete="off" aria-label="Buscar estudantes">
+          </div>
+          <select id="filtro-turma" aria-label="Filtrar por turma">
+            <option value="">Todas as turmas</option>
+          </select>
+        </div>
+      </header>
+
+      <div class="tabela-rolagem">
+        <table class="tabela tabela-estudantes">
+          <thead>
+            <tr>
+              <th>Estudante</th>
+              <th>Turma</th>
+              <th>Nascimento</th>
+              <th>Responsável</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody id="lista-estudantes">
+            <tr><td colspan="5" class="vazio">Carregando...</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <footer class="paginacao" id="paginacao" hidden>
+        <span id="pag-info"></span>
+        <div class="pag-botoes">
+          <button type="button" class="btn btn-claro" id="pag-anterior">Anterior</button>
+          <span id="pag-numero"></span>
+          <button type="button" class="btn btn-claro" id="pag-proximo">Próxima</button>
+        </div>
+      </footer>
+    </section>
+  </main>
+
+  <!-- Janela de edição do estudante -->
+  <dialog id="dlg-estudante" class="dlg-larga">
+    <form id="form-estudante-edicao" novalidate>
+      <h2>Corrigir dados do estudante</h2>
+      <div class="grade">
+        <div class="campo col-12">
+          <label for="ed_nome">Nome completo</label>
+          <input id="ed_nome" name="nome_completo" type="text" maxlength="150" autocomplete="off" required>
+          <small class="erro" data-erro="nome_completo"></small>
+        </div>
+        <div class="campo col-6">
+          <label for="ed_matricula">Matrícula</label>
+          <input id="ed_matricula" name="matricula" type="text" maxlength="10" inputmode="numeric" placeholder="0000-00000" required>
+          <small class="erro" data-erro="matricula"></small>
+        </div>
+        <div class="campo col-6">
+          <label for="ed_nascimento">Data de nascimento</label>
+          <input id="ed_nascimento" name="data_nascimento" type="date" required>
+          <small class="erro" data-erro="data_nascimento"></small>
+        </div>
+        <div class="campo col-12">
+          <label for="ed_turma">Turma</label>
+          <select id="ed_turma" name="turma_id" required>
+            <option value="">Selecione a turma</option>
+          </select>
+          <small class="erro" data-erro="turma_id"></small>
+          <small class="dica">Para mudar o estudante de turma, escolha a nova turma aqui.</small>
+        </div>
+        <div class="campo col-12"><p class="subsecao">Responsável principal</p></div>
+        <div class="campo col-12">
+          <label for="ed_resp_nome">Nome do responsável</label>
+          <input id="ed_resp_nome" name="responsavel_nome" type="text" maxlength="150" autocomplete="off" required>
+          <small class="erro" data-erro="responsavel_nome"></small>
+        </div>
+        <div class="campo col-6">
+          <label for="ed_resp_parentesco">Parentesco</label>
+          <input id="ed_resp_parentesco" name="responsavel_parentesco" type="text" maxlength="40" autocomplete="off" required>
+          <small class="erro" data-erro="responsavel_parentesco"></small>
+        </div>
+        <div class="campo col-6">
+          <label for="ed_resp_telefone">Telefone</label>
+          <input id="ed_resp_telefone" name="responsavel_telefone" type="text" maxlength="15" inputmode="tel" placeholder="(00) 00000-0000" required>
+          <small class="erro" data-erro="responsavel_telefone"></small>
+        </div>
+      </div>
+      <div class="dlg-acoes">
+        <button type="button" id="ed-cancelar" class="btn btn-claro">Cancelar</button>
+        <button type="submit" id="ed-salvar" class="btn btn-escuro">Salvar alterações</button>
+      </div>
+    </form>
+  </dialog>
+</div>
+
+<div id="aviso" class="aviso" role="status" aria-live="polite"></div>
+
+<script src="assets/js/comum.js"></script>
+<script src="assets/js/estudantes.js"></script>
+</body>
+</html>

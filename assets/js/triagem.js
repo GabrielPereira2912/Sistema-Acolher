@@ -23,11 +23,8 @@ let categorias = []; // categorias vindas do banco
 async function iniciar() {
   const usuario = await carregarUsuario(); // menu lateral
 
-  // Admin não registra triagem: bloqueia o envio
-  if (usuario && usuario.perfil === 'ADMIN') {
-    btnSalvar.disabled = true;
-    mostrarAviso('Seu perfil não pode registrar triagens.', false);
-  }
+  // A triagem é da equipe técnica: o administrador volta para o Dashboard
+  if (bloquearAdmin(usuario)) return;
 
   await Promise.all([carregarEstudantes(), carregarCategorias()]);
 

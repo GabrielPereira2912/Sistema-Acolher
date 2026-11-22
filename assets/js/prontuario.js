@@ -19,16 +19,17 @@ const btnSalvar = document.getElementById('btn-salvar');
 async function iniciar() {
   const usuario = await carregarUsuario(); // preenche o menu lateral
 
+  // Prontuário é só da equipe técnica: o administrador volta para o Dashboard
+  if (bloquearAdmin(usuario)) return;
+
   if (!estudanteId) {
     await mostrarSeletor();
     return;
   }
 
-  // Admin não registra atendimento: esconde o formulário
   if (usuario) {
     // defaultValue: assim o form.reset() (botão Limpar) não apaga o nome
     document.getElementById('profissional').defaultValue = usuario.nome;
-    if (usuario.perfil === 'ADMIN') document.getElementById('card-novo').hidden = true;
   }
 
   limparFormulario();

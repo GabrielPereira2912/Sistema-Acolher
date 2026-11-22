@@ -4,11 +4,14 @@
 -- =====================================================
 USE acolher;
 
--- Usuários de teste para o LOGIN. Senha de ambos: teste123 (guardada como hash, gerado com password_hash)
---   marina@escola.test  (psicóloga)   |   ricardo@escola.test  (assistente social)
+-- Usuários de teste para o LOGIN. Senha de TODOS: teste123 (guardada como hash, gerado com password_hash)
+--   marina@escola.test (psicóloga) | ricardo@escola.test (assistente social) | admin@escola.test (ADMIN)
+-- ATENÇÃO: o admin de teste é só para desenvolvimento/apresentação. Antes de usar de verdade, troque a senha
+-- (tela Minha conta) ou desative-o e crie o seu com scripts/criar_usuario.php.
 INSERT INTO usuarios (nome, email, senha_hash, perfil, registro_classe) VALUES
  ('Marina Lopes',  'marina@escola.test',  '$2y$10$3jbHeboi6xuMKKx99cSWvO/3AIABGsEkm2AfwLP1zax6VbZulm85q', 'PSICOLOGO',         'CRP 06/12345'),
- ('Ricardo Alves', 'ricardo@escola.test', '$2y$10$3jbHeboi6xuMKKx99cSWvO/3AIABGsEkm2AfwLP1zax6VbZulm85q', 'ASSISTENTE_SOCIAL', 'CRESS 12345');
+ ('Ricardo Alves', 'ricardo@escola.test', '$2y$10$3jbHeboi6xuMKKx99cSWvO/3AIABGsEkm2AfwLP1zax6VbZulm85q', 'ASSISTENTE_SOCIAL', 'CRESS 12345'),
+ ('Administrador', 'admin@escola.test',   '$2y$10$3jbHeboi6xuMKKx99cSWvO/3AIABGsEkm2AfwLP1zax6VbZulm85q', 'ADMIN',             NULL);
 
 -- Turmas do ano letivo atual (YEAR(CURDATE()) = o ano de hoje, assim nunca "vencem")
 INSERT INTO turmas (nome, turno, etapa_ensino, ano_letivo) VALUES

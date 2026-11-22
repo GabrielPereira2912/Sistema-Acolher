@@ -55,12 +55,68 @@ Ordem de importação: `banco_acolher_v3.sql` -> `dados_teste.sql` -> `dados_fic
 ## Login (como usar)
 
 - Abra `http://localhost/acolher/login.html`. Qualquer outra página sem login volta para cá e, depois de entrar, retorna à página pedida.
-- Usuários de teste (dados_teste.sql): `marina@escola.test` (psicóloga) e `ricardo@escola.test` (assistente social). Senha dos dois: `teste123`.
-- **Criar o primeiro ADMIN** (não existe no seed): no terminal, na pasta do projeto, rode `C:\xampp\php\php.exe scripts\criar_usuario.php` (Windows/XAMPP) ou `php scripts/criar_usuario.php`. A senha vira hash; nunca fica em texto no banco. O script só roda pelo terminal.
+- Usuários de teste (dados_teste.sql), senha de todos `teste123`: `marina@escola.test` (psicóloga), `ricardo@escola.test` (assistente social) e `admin@escola.test` (**ADMIN**, abre a tela de Usuários). O admin de teste é só para desenvolvimento/apresentação: antes de uso real, troque a senha em Minha conta ou desative-o e crie o seu pelo script.
+- **Criar um ADMIN de verdade** (o `admin@escola.test` do seed é só de teste): no terminal, na pasta do projeto, rode `C:\xampp\php\php.exe scripts\criar_usuario.php` (Windows/XAMPP) ou `php scripts/criar_usuario.php`. A senha vira hash; nunca fica em texto no banco. O script só roda pelo terminal.
 - Botão **Sair** (rodapé do menu) encerra a sessão.
 - Para trocar o tempo de expiração: constante `TEMPO_SESSAO` em `api/conexao.php`.
 
 ### Limites conhecidos (protótipo)
 - Não há bloqueio por tentativas (só um atraso de 0,4 s a cada erro). Em produção, criar uma tabela de tentativas.
 - Em produção usar HTTPS (o cookie já vira `Secure` sozinho quando o site usa HTTPS).
-- Ainda não existe tela para cadastrar/desativar usuários: use o script ou o phpMyAdmin (`ativo = 0`).
+
+## Usuários e Minha conta
+
+| Tela | Quem vê | API | O que faz |
+|---|---|---|---|
+| `usuarios.html` | **só ADMIN** (menu escondido para os outros; a API devolve 403 e a página volta ao dashboard) | `api/usuarios.php` | Lista a equipe, cadastra usuário (perfil + registro CRP/CRESS), ativa/desativa e redefine a senha de outro usuário |
+| `minha-conta.html` | todos os logados | `api/minha_senha.php` | Mostra os dados do usuário e troca a própria senha (exige a senha atual) |
+
+Regras:
+- Senha: de 8 a 72 caracteres (o bcrypt ignora o que passa de 72), sempre guardada como hash (`password_hash`).
+- Registro de classe obrigatório para PSICOLOGO e ASSISTENTE_SOCIAL; ADMIN fica sem registro.
+- Usuário nunca é apagado, só desativado (o histórico continua com o nome dele). Quem é desativado perde o acesso na hora.
+- O ADMIN não pode desativar o próprio usuário, e sempre sobra pelo menos um ADMIN ativo.
+- A API nunca devolve `senha_hash`.
+- Limite conhecido: ao redefinir/trocar a senha, sessões já abertas em OUTROS navegadores seguem válidas até expirarem (30 min parado). A sessão atual recebe novo ID.
+
+## Permissões por perfil
+
+| Tela / API | ADMIN | PSICOLOGO / ASSISTENTE_SOCIAL |
+|---|---|---|
+| Dashboard (`dashboard.php`) | vê números e lista, **sem abrir prontuário** (nomes não são links) | vê e abre o prontuário |
+| Cadastro do Estudante | cadastra e **permanece no cadastro** (não vai à triagem) | cadastra e segue para a triagem |
+| Triagem de Demandas | bloqueado (tela volta ao Dashboard; `acolhimentos.php` 403) | sim |
+| Prontuário | **bloqueado** (tela volta ao Dashboard; `prontuario.php` e a lista `GET estudantes.php` respondem 403; não gera log `VISUALIZOU`) | sim |
+| Atendimentos | bloqueado (403) | sim |
+| Usuários | sim (cards, busca, filtro, último acesso, **editar**, ativar/desativar, redefinir senha) | bloqueado (403) |
+| Estudantes (`estudantes.html`) | **só ADMIN**: corrige identificação, **turma** e responsável principal | bloqueado (tela volta ao Dashboard; `estudantes_gestao.php` 403) |
+| Minha conta | sim | sim |
+
+O menu lateral mostra só o que o perfil pode usar (`ajustarMenu()` em `comum.js`), mas a regra de verdade está no PHP: esconder o botão não protege, o 403 da API protege.
+
+## Edição pelo ADMIN
+
+**Editar usuário** (`usuarios.php`, ação `editar`): nome, e-mail, perfil e registro de classe.
+- E-mail único (outro usuário com o mesmo e-mail dá 409). Registro de classe obrigatório para profissionais; ADMIN fica sem registro.
+- O ADMIN **não altera o próprio perfil** (para não se trancar para fora) e sempre sobra **pelo menos um ADMIN ativo**.
+- Mudar o perfil vale **na hora**, mesmo com a pessoa logada (o login confere o banco a cada requisição). A tela pede confirmação.
+- Os atendimentos antigos mantêm o cargo que a pessoa tinha na época (`cargo_profissional` é gravado no registro).
+- A senha continua sendo trocada pela ação própria (Redefinir senha).
+
+**Corrigir estudante e mudar de turma** (`estudantes_gestao.php`): nome, matrícula, data de nascimento, turma e responsável principal (nome, parentesco, telefone).
+- **Privacidade:** a API não devolve nem altera composição familiar, necessidades de apoio, status, triagem ou atendimentos. O administrador continua sem acesso ao conteúdo do prontuário.
+- Mesmas regras do cadastro (arquivo `regras_estudante.php`, compartilhado com `estudantes.php`): matrícula `0000-00000` e única entre os estudantes, data não futura, telefone com DDD.
+- Mudar de turma pede confirmação. Cada correção grava `EDITOU` em `log_acessos` com o ADMIN e o estudante.
+- Limite conhecido: o histórico não guarda a turma anterior (só o log de que houve edição).
+
+## Esqueci a senha (recuperação)
+
+| Quem esqueceu | O que fazer |
+|---|---|
+| Psicólogo(a) ou assistente social | Um ADMIN abre **Usuários > Redefinir senha** e define uma senha provisória. A pessoa entra e troca em **Minha conta**. |
+| Um ADMIN (existe outro ADMIN) | O outro ADMIN redefine em **Usuários**. |
+| O **único** ADMIN (ou todos) | Pelo terminal, no computador do servidor, na pasta do projeto: `C:\xampp\php\php.exe scripts\redefinir_senha.php` (Windows/XAMPP) ou `php scripts/redefinir_senha.php`. Informe o e-mail e a nova senha (8 a 72 caracteres). Se o usuário estiver desativado, o script pergunta se quer reativar. |
+
+- A "chave" da recuperação é ter acesso ao servidor: o script só roda pelo terminal (pela web responde 403).
+- Não existe "esqueci minha senha" por e-mail: isso exigiria um servidor de e-mail (SMTP) e uma tabela de tokens, fora do escopo do protótipo.
+- Boa prática: manter pelo menos **dois** administradores ativos e entregar senhas provisórias pessoalmente, pedindo a troca no primeiro acesso.

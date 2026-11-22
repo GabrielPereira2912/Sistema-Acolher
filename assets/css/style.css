@@ -399,3 +399,66 @@ a.btn { display: inline-flex; align-items: center; gap: 8px; text-decoration: no
   background: #fdecec; border: 1px solid #f3c4c4; border-radius: 10px; padding: 10px 12px;
 }
 .login-aviso { margin-top: 20px; text-align: center; font-size: 12px; color: var(--texto-suave); }
+
+/* ---------- Usuários e Minha conta ---------- */
+.menu a[hidden] { display: none; }
+#form-usuario, #form-senha { margin-bottom: 24px; }
+.usuario-nome-lista { display: block; font-weight: 500; overflow-wrap: anywhere; }
+.usuario-email { display: block; font-size: 13px; color: var(--texto-suave); overflow-wrap: anywhere; }
+.linha-inativa { background: #fafafa; color: var(--texto-suave); }
+.acoes-linha { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.acoes-linha .btn { padding: 7px 12px; font-size: 13px; }
+.tabela-usuarios td:nth-child(2), .tabela-usuarios td:nth-child(3) { white-space: normal; }
+.dados-conta { padding: 0 22px 22px; }
+
+/* Janela de redefinir senha */
+dialog { border: 1px solid var(--borda); border-radius: var(--raio); padding: 24px; width: min(420px, calc(100vw - 32px)); }
+dialog::backdrop { background: rgba(0, 0, 0, .4); }
+dialog form { display: flex; flex-direction: column; gap: 16px; }
+dialog h2 { font-size: 18px; }
+.dlg-acoes { display: flex; justify-content: flex-end; gap: 12px; flex-wrap: wrap; }
+
+@media (max-width: 700px) {
+  .tabela-usuarios td.nome-aluno { margin-bottom: 8px; }
+  .acoes-linha { justify-content: flex-end; }
+}
+
+/* ---------- Perfil ADMIN ---------- */
+/* O menu só aparece depois que o comum.js escolhe os itens do perfil (evita "piscar") */
+.menu { visibility: hidden; }
+.menu.pronto { visibility: visible; }
+.nome-simples { display: block; font-weight: 500; margin-bottom: 6px; overflow-wrap: anywhere; }
+
+/* Usuários: cards em 4 colunas, filtros da lista e nota nos cards */
+.cards-resumo.quatro { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.indicador-nota { font-size: 13px; color: var(--texto-suave); min-height: 1em; }
+.filtros-lista { display: flex; gap: 12px; flex-wrap: wrap; flex: 1 1 320px; justify-content: flex-end; }
+.filtros-lista .busca { flex: 1 1 220px; }
+.filtros-lista select { width: auto; flex: 0 1 190px; }
+.tabela-usuarios td:nth-child(5) { white-space: normal; font-size: 14px; color: var(--texto-suave); }
+.tabela-usuarios { min-width: 860px; }
+@media (max-width: 1240px) { .cards-resumo.quatro { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 700px) { .tabela-usuarios { min-width: 0; } }
+@media (max-width: 560px) { .cards-resumo.quatro { grid-template-columns: minmax(0, 1fr); } .filtros-lista { justify-content: stretch; } .filtros-lista select { flex: 1 1 100%; } }
+
+/* Usuários: coluna do nome com largura mínima (e-mail não quebra no meio) e células mais compactas */
+.tabela-usuarios th, .tabela-usuarios td { padding-left: 14px; padding-right: 14px; }
+.tabela-usuarios th:first-child, .tabela-usuarios td:first-child { padding-left: 22px; min-width: 15rem; }
+.tabela-usuarios .usuario-email, .tabela-usuarios .usuario-nome-lista { overflow-wrap: break-word; }
+@media (max-width: 700px) { .tabela-usuarios th:first-child, .tabela-usuarios td:first-child { min-width: 0; padding-left: 0; } .tabela-usuarios td { padding-left: 0; padding-right: 0; } }
+
+/* ---------- Estudantes (ADMIN) e janelas de edição ---------- */
+dialog.dlg-larga { width: min(640px, calc(100vw - 32px)); }
+dialog { max-height: 92vh; overflow-y: auto; }
+.subsecao { font-size: 13px; font-weight: 600; color: var(--texto-suave); text-transform: uppercase; letter-spacing: .04em; margin-top: 4px; }
+.tabela-estudantes { min-width: 820px; }
+.tabela-estudantes th:first-child, .tabela-estudantes td:first-child { padding-left: 22px; min-width: 14rem; }
+.tabela-estudantes td .usuario-nome-lista { font-weight: 400; }
+@media (max-width: 700px) {
+  .tabela-estudantes { min-width: 0; }
+  .tabela-estudantes th:first-child, .tabela-estudantes td:first-child { min-width: 0; padding-left: 0; }
+}
+
+/* Janelas (dialog): centralizadas na tela e sem o recuo extra dos formulários dentro de cartões */
+dialog { margin: auto; }
+dialog .grade { padding: 0; }
