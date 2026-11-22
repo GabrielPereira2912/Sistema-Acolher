@@ -120,3 +120,7 @@ O menu lateral mostra só o que o perfil pode usar (`ajustarMenu()` em `comum.js
 - A "chave" da recuperação é ter acesso ao servidor: o script só roda pelo terminal (pela web responde 403).
 - Não existe "esqueci minha senha" por e-mail: isso exigiria um servidor de e-mail (SMTP) e uma tabela de tokens, fora do escopo do protótipo.
 - Boa prática: manter pelo menos **dois** administradores ativos e entregar senhas provisórias pessoalmente, pedindo a troca no primeiro acesso.
+
+## Massa de dados completa para testes
+
+`sql/massa_de_teste.sql` (34 estudantes, 5 usuários extras, 73 atendimentos, encaminhamentos de todos os tipos, log de acessos) e `sql/limpar_massa_de_teste.sql`. O roteiro de testes e os números esperados estão em **`LEIAME_massa_de_teste.md`**.
