@@ -5,16 +5,68 @@
 
 /* ---------- Cores e medidas em um lugar só (fácil de trocar) ---------- */
 :root {
+  color-scheme: light;
   --fundo: #fafafa;
-  --branco: #ffffff;
+  --branco: #ffffff;            /* fundo de cartões e campos */
   --texto: #111111;
   --texto-suave: #666666;
   --borda: #e5e5e5;
-  --escuro: #111111;
+  --borda-forte: #cfcfcf;
+  --escuro: #111111;            /* botão principal, item marcado */
+  --escuro-hover: #333333;
+  --sobre-escuro: #ffffff;      /* texto em cima do --escuro */
+  --hover: #f0f0f0;             /* item de menu (hover/ativo) e avatar */
+  --hover-suave: #fafafa;       /* linha de tabela/opção em hover */
+  --superficie: #f3f3f3;        /* selos, chips, ícones */
+  --desabilitado: #f6f6f6;      /* campo desabilitado/somente leitura */
+  --texto-desab: #999999;
+  --rodape: #fcfcfc;            /* rodapé dos cartões */
+  --ponto: #c8c8c8;             /* bolinha da linha do tempo */
+  --placeholder: #8a8a8a;
+  --foco: #111111;
   --erro: #c62828;
+  --erro-fundo: #fdecec;
+  --erro-borda: #f3c4c4;
   --sucesso: #1b7f4b;
+  --sobre-aviso: #ffffff;       /* texto do aviso (toast) */
+  --aviso-fundo: #fff8e6;
+  --aviso-borda: #f0dca0;
+  --seta-select: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
   --raio: 14px;
   --largura-menu: 260px;
+}
+
+/* ---------- MODO ESCURO ----------
+   O tema.js coloca data-tema="escuro" no <html> (escolha salva ou preferência do sistema).
+   Só as cores mudam: todo o resto do CSS usa as variáveis acima. */
+:root[data-tema="escuro"] {
+  color-scheme: dark;
+  --fundo: #121314;
+  --branco: #1b1c1f;
+  --texto: #ececec;
+  --texto-suave: #a0a1a6;
+  --borda: #303136;
+  --borda-forte: #46474d;
+  --escuro: #f1f1f1;
+  --escuro-hover: #d4d4d6;
+  --sobre-escuro: #111111;
+  --hover: #26272b;
+  --hover-suave: #202125;
+  --superficie: #26272b;
+  --desabilitado: #202125;
+  --texto-desab: #75767b;
+  --rodape: #17181a;
+  --ponto: #55565b;
+  --placeholder: #7e7f85;
+  --foco: #f1f1f1;
+  --erro: #ff7b7b;
+  --erro-fundo: #3b1f21;
+  --erro-borda: #6e3034;
+  --sucesso: #4cc38a;
+  --sobre-aviso: #111111;
+  --aviso-fundo: #3a3217;
+  --aviso-borda: #6b5b24;
+  --seta-select: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23a0a1a6' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
 }
 
 * { box-sizing: border-box; margin: 0; }
@@ -56,7 +108,7 @@ body {
 .marca span { font-size: 12px; color: var(--texto-suave); }
 .marca-icone {
   width: 40px; height: 40px; border-radius: 12px;
-  background: var(--escuro); color: #fff;
+  background: var(--escuro); color: var(--sobre-escuro);
   display: grid; place-items: center;
 }
 
@@ -68,8 +120,8 @@ body {
   color: var(--texto-suave); text-decoration: none;
   border: 1px solid transparent;
 }
-.menu a:hover { background: #f0f0f0; }
-.menu a.ativo { color: var(--texto); background: #f0f0f0; border-color: #cfcfcf; font-weight: 500; }
+.menu a:hover { background: var(--hover); }
+.menu a.ativo { color: var(--texto); background: var(--hover); border-color: var(--borda-forte); font-weight: 500; }
 
 .usuario {
   display: flex; align-items: center; gap: 12px;
@@ -77,7 +129,7 @@ body {
 }
 .avatar {
   width: 38px; height: 38px; border-radius: 50%;
-  background: #f0f0f0; font-size: 12px; font-weight: 600;
+  background: var(--hover); font-size: 12px; font-weight: 600;
   display: grid; place-items: center;
 }
 .usuario-info { flex: 1; min-width: 0; line-height: 1.3; }
@@ -87,6 +139,17 @@ body {
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
 .sair { color: var(--texto); }
+.tema-btn {
+  background: none; border: 0; padding: 0; cursor: pointer; color: var(--texto);
+  display: grid; place-items: center; border-radius: 8px;
+}
+.tema-btn:hover { color: var(--texto-suave); }
+.tema-btn:focus-visible, .sair:focus-visible { outline: 2px solid var(--foco); outline-offset: 3px; }
+.tema-btn .i-sol { display: none; }                      /* no escuro mostra o sol (voltar ao claro) */
+:root[data-tema="escuro"] .tema-btn .i-sol { display: block; }
+:root[data-tema="escuro"] .tema-btn .i-lua { display: none; }
+.tema-flutuante { position: fixed; top: 16px; right: 16px; width: 40px; height: 40px; background: var(--branco); border: 1px solid var(--borda); border-radius: 12px; }
+
 
 /* ---------- Conteúdo ---------- */
 .conteudo { min-width: 0; padding: 40px 48px 56px; max-width: 1100px; width: 100%; }
@@ -109,7 +172,7 @@ h1 { font-size: 28px; font-weight: 600; letter-spacing: -.01em; }
 .card-topo p { font-size: 14px; color: var(--texto-suave); }
 .card-icone {
   width: 40px; height: 40px; border-radius: 12px;
-  background: #f3f3f3; display: grid; place-items: center;
+  background: var(--superficie); display: grid; place-items: center;
 }
 
 /* ---------- Grade de 12 colunas para os campos ---------- */
@@ -140,12 +203,12 @@ textarea { resize: vertical; min-height: 84px; }
 select {
   appearance: none; -webkit-appearance: none; cursor: pointer;
   padding-right: 38px;
-  background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") no-repeat right 12px center / 16px;
+  background: var(--branco) var(--seta-select) no-repeat right 12px center / 16px;
 }
-select:disabled, input:disabled { background-color: #f6f6f6; color: #999; cursor: not-allowed; }
-input::placeholder, textarea::placeholder { color: #8a8a8a; }
-input:focus, select:focus, textarea:focus { outline: 2px solid #111; outline-offset: 1px; }
-input[readonly] { background: #f6f6f6; color: var(--texto-suave); cursor: default; }
+select:disabled, input:disabled { background-color: var(--desabilitado); color: var(--texto-desab); cursor: not-allowed; }
+input::placeholder, textarea::placeholder { color: var(--placeholder); }
+input:focus, select:focus, textarea:focus { outline: 2px solid var(--foco); outline-offset: 1px; }
+input[readonly] { background: var(--desabilitado); color: var(--texto-suave); cursor: default; }
 
 .dica { font-size: 12px; color: var(--texto-suave); }
 
@@ -160,17 +223,17 @@ input[readonly] { background: #f6f6f6; color: var(--texto-suave); cursor: defaul
   font: inherit; font-weight: 500; cursor: pointer;
   padding: 11px 18px; border-radius: 10px; border: 1px solid transparent;
 }
-.btn-escuro { background: var(--escuro); color: #fff; }
-.btn-escuro:hover { background: #333; }
+.btn-escuro { background: var(--escuro); color: var(--sobre-escuro); }
+.btn-escuro:hover { background: var(--escuro-hover); }
 .btn-claro { background: var(--branco); color: var(--texto); border-color: var(--borda); }
-.btn-claro:hover { background: #f3f3f3; }
+.btn-claro:hover { background: var(--superficie); }
 .btn:disabled { opacity: .6; cursor: wait; }
 
 /* ---------- Aviso (toast) ---------- */
 .aviso {
   position: fixed; right: 24px; bottom: 24px; z-index: 10;
   max-width: 340px; padding: 14px 18px; border-radius: 12px;
-  color: #fff; font-weight: 500;
+  color: var(--sobre-aviso); font-weight: 500;
   opacity: 0; transform: translateY(8px); pointer-events: none;
   transition: opacity .2s, transform .2s;
 }
@@ -183,7 +246,8 @@ input[readonly] { background: #f6f6f6; color: var(--texto-suave); cursor: defaul
   .layout { grid-template-columns: minmax(0, 1fr); } /* minmax: a coluna pode encolher (a tabela rola por dentro) */
   .sidebar { position: static; height: auto; }
   .menu { flex-direction: row; flex-wrap: wrap; padding: 12px; }
-  .menu-titulo, .usuario { display: none; }
+  .menu-titulo { display: none; }
+  .usuario { padding: 10px 16px; } /* no celular a barra do usuário (tema e Sair) continua visível */
   .conteudo { padding: 24px 16px 40px; }
   /* todos os campos ocupam a linha inteira */
   .col-2, .col-3, .col-4, .col-5, .col-6, .col-8 { grid-column: span 12; }
@@ -216,9 +280,9 @@ input[readonly] { background: #f6f6f6; color: var(--texto-suave); cursor: defaul
 .selo {
   display: inline-block; font-size: 12px; font-weight: 500;
   padding: 3px 10px; border-radius: 999px;
-  background: #f3f3f3; border: 1px solid var(--borda);
+  background: var(--superficie); border: 1px solid var(--borda);
 }
-.selo-alerta { background: #fdecec; border-color: #f5c2c2; color: var(--erro); }
+.selo-alerta { background: var(--erro-fundo); border-color: var(--erro-borda); color: var(--erro); }
 
 /* ---------- Duas colunas ---------- */
 .duas-colunas { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr); gap: 24px; align-items: start; }
@@ -230,7 +294,7 @@ input[readonly] { background: #f6f6f6; color: var(--texto-suave); cursor: defaul
 }
 .card-rodape {
   display: flex; justify-content: flex-end; gap: 12px;
-  padding: 16px 22px; border-top: 1px solid var(--borda); background: #fcfcfc;
+  padding: 16px 22px; border-top: 1px solid var(--borda); background: var(--rodape);
 }
 
 /* ---------- Linha do tempo ---------- */
@@ -238,7 +302,7 @@ input[readonly] { background: #f6f6f6; color: var(--texto-suave); cursor: defaul
 .item-tempo { position: relative; padding: 0 0 22px 18px; border-left: 2px solid var(--borda); }
 .item-tempo::before { /* bolinha */
   content: ""; position: absolute; left: -6px; top: 2px;
-  width: 10px; height: 10px; border-radius: 50%; background: #c8c8c8;
+  width: 10px; height: 10px; border-radius: 50%; background: var(--ponto);
 }
 .item-tempo:first-child::before { background: var(--escuro); } /* o mais recente fica preto */
 .item-tempo:last-child { border-left-color: transparent; }
@@ -248,7 +312,7 @@ input[readonly] { background: #f6f6f6; color: var(--texto-suave); cursor: defaul
 .item-texto { margin: 8px 0; line-height: 1.45; white-space: pre-line; }
 .etiqueta {
   display: inline-block; font-size: 12px; padding: 2px 10px;
-  border: 1px solid var(--borda); border-radius: 999px; background: #fff;
+  border: 1px solid var(--borda); border-radius: 999px; background: var(--branco);
 }
 .vazio { color: var(--texto-suave); padding: 6px 0 14px; }
 .linha-tempo .vazio { list-style: none; margin-left: -18px; }
@@ -281,21 +345,21 @@ p.vazio { padding: 24px; }
   border: 1px solid var(--borda); border-radius: 12px;
   font-weight: 400; line-height: 1.4; cursor: pointer;
 }
-.opcao:hover { background: #fafafa; }
-.opcao:has(input:checked) { border-color: var(--escuro); background: #f6f6f6; } /* marcada */
-.opcao input { width: 18px; height: 18px; padding: 0; margin-top: 2px; flex-shrink: 0; accent-color: #111; cursor: pointer; }
+.opcao:hover { background: var(--hover-suave); }
+.opcao:has(input:checked) { border-color: var(--escuro); background: var(--desabilitado); } /* marcada */
+.opcao input { width: 18px; height: 18px; padding: 0; margin-top: 2px; flex-shrink: 0; accent-color: var(--escuro); cursor: pointer; }
 .opcao span { overflow-wrap: anywhere; }
 
 /* Aviso informativo (estudante já triado) */
 .nota {
   padding: 12px 14px; border-radius: 10px; font-size: 14px; line-height: 1.5;
-  background: #fff8e6; border: 1px solid #f0dca0;
+  background: var(--aviso-fundo); border: 1px solid var(--aviso-borda);
 }
 .nota a { color: var(--texto); font-weight: 500; }
 
 /* Chips das demandas na linha do tempo do prontuário */
 .chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0; }
-.etiqueta.demanda { background: #f3f3f3; }
+.etiqueta.demanda { background: var(--superficie); }
 
 @media (max-width: 1240px) { .opcoes { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 700px) { .opcoes { grid-template-columns: minmax(0, 1fr); } }
@@ -332,7 +396,7 @@ a.btn { display: inline-flex; align-items: center; gap: 8px; text-decoration: no
 .tabela tbody tr:last-child td { border-bottom: 0; }
 .tabela td:nth-child(2), .tabela td:nth-child(3) { white-space: nowrap; } /* turma e data não quebram */
 .linha-clicavel { cursor: pointer; }
-.linha-clicavel:hover { background: #fafafa; }
+.linha-clicavel:hover { background: var(--hover-suave); }
 .nome-aluno a { display: block; color: var(--texto); font-weight: 500; text-decoration: none; margin-bottom: 6px; overflow-wrap: anywhere; }
 .nome-aluno a:hover { text-decoration: underline; }
 .col-seta { width: 48px; text-align: right; color: var(--texto-suave); }
@@ -340,7 +404,7 @@ a.btn { display: inline-flex; align-items: center; gap: 8px; text-decoration: no
 .so-leitor { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); } /* só para leitores de tela */
 
 /* Selo "Triagem" fica só com contorno, como no wireframe */
-.selo-triagem { background: #fff; }
+.selo-triagem { background: var(--branco); }
 
 @media (max-width: 1240px) { .cards-resumo { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 @media (max-width: 760px) { .cards-resumo { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
@@ -355,8 +419,8 @@ a.btn { display: inline-flex; align-items: center; gap: 8px; text-decoration: no
 .pag-botoes .btn { padding: 8px 14px; }
 
 /* Quem navega por teclado vê qual linha está em foco */
-.linha-clicavel:focus-within { background: #f3f3f3; }
-.nome-aluno a:focus-visible { outline: 2px solid #111; outline-offset: 2px; border-radius: 4px; }
+.linha-clicavel:focus-within { background: var(--superficie); }
+.nome-aluno a:focus-visible { outline: 2px solid var(--foco); outline-offset: 2px; border-radius: 4px; }
 .tabela td.vazio .btn { margin-left: 8px; }
 
 /* Celular: cada estudante vira um "cartãozinho" (nada de rolar para o lado) */
@@ -396,7 +460,7 @@ a.btn { display: inline-flex; align-items: center; gap: 8px; text-decoration: no
 #form-login .btn { width: 100%; justify-content: center; padding: 12px; }
 .login-erro {
   font-size: 13px; color: var(--erro);
-  background: #fdecec; border: 1px solid #f3c4c4; border-radius: 10px; padding: 10px 12px;
+  background: var(--erro-fundo); border: 1px solid var(--erro-borda); border-radius: 10px; padding: 10px 12px;
 }
 .login-aviso { margin-top: 20px; text-align: center; font-size: 12px; color: var(--texto-suave); }
 
@@ -405,15 +469,15 @@ a.btn { display: inline-flex; align-items: center; gap: 8px; text-decoration: no
 #form-usuario, #form-senha { margin-bottom: 24px; }
 .usuario-nome-lista { display: block; font-weight: 500; overflow-wrap: anywhere; }
 .usuario-email { display: block; font-size: 13px; color: var(--texto-suave); overflow-wrap: anywhere; }
-.linha-inativa { background: #fafafa; color: var(--texto-suave); }
+.linha-inativa { background: var(--hover-suave); color: var(--texto-suave); }
 .acoes-linha { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
 .acoes-linha .btn { padding: 7px 12px; font-size: 13px; }
 .tabela-usuarios td:nth-child(2), .tabela-usuarios td:nth-child(3) { white-space: normal; }
 .dados-conta { padding: 0 22px 22px; }
 
 /* Janela de redefinir senha */
-dialog { border: 1px solid var(--borda); border-radius: var(--raio); padding: 24px; width: min(420px, calc(100vw - 32px)); }
-dialog::backdrop { background: rgba(0, 0, 0, .4); }
+dialog { background: var(--branco); color: var(--texto); border: 1px solid var(--borda); border-radius: var(--raio); padding: 24px; width: min(420px, calc(100vw - 32px)); }
+dialog::backdrop { background: rgba(0, 0, 0, .5); }
 dialog form { display: flex; flex-direction: column; gap: 16px; }
 dialog h2 { font-size: 18px; }
 .dlg-acoes { display: flex; justify-content: flex-end; gap: 12px; flex-wrap: wrap; }

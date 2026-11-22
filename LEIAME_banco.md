@@ -124,3 +124,10 @@ O menu lateral mostra só o que o perfil pode usar (`ajustarMenu()` em `comum.js
 ## Massa de dados completa para testes
 
 `sql/massa_de_teste.sql` (34 estudantes, 5 usuários extras, 73 atendimentos, encaminhamentos de todos os tipos, log de acessos) e `sql/limpar_massa_de_teste.sql`. O roteiro de testes e os números esperados estão em **`LEIAME_massa_de_teste.md`**.
+
+## Modo escuro
+- Botão de sol/lua ao lado do "Sair" (na tela de login, no canto superior direito).
+- A escolha fica salva no navegador (`localStorage`, chave `acolher-tema`); sem escolha, o sistema segue o tema do computador/celular.
+- `assets/js/tema.js` roda no `<head>` (evita piscar o tema errado) e só troca o atributo `data-tema` do `<html>`.
+- Todas as cores ficam como variáveis no topo de `assets/css/style.css`; a paleta escura está em `:root[data-tema="escuro"]`. Para ajustar uma cor, mude só ali.
+- No celular a barra do usuário (tema + Sair) agora aparece também (antes o "Sair" ficava escondido).
