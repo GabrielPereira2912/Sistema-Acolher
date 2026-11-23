@@ -131,3 +131,10 @@ O menu lateral mostra só o que o perfil pode usar (`ajustarMenu()` em `comum.js
 - `assets/js/tema.js` roda no `<head>` (evita piscar o tema errado) e só troca o atributo `data-tema` do `<html>`.
 - Todas as cores ficam como variáveis no topo de `assets/css/style.css`; a paleta escura está em `:root[data-tema="escuro"]`. Para ajustar uma cor, mude só ali.
 - No celular a barra do usuário (tema + Sair) agora aparece também (antes o "Sair" ficava escondido).
+
+## Concluir ou cancelar encaminhamento
+- No prontuário, cada encaminhamento **aberto** tem os botões **Concluir** e **Cancelar** (cancelar pede confirmação).
+- `api/encaminhamentos.php` (POST `{id, acao: "concluir"|"cancelar"}`): só Psicólogo e Assistente Social (Admin recebe 403).
+- Concluir grava `status = CONCLUIDO` e `concluido_em` = hoje. Cancelar grava `status = CANCELADO` (sem data).
+- Só encaminhamento ABERTO pode ser encerrado (já encerrado devolve 409). Cada alteração entra no `log_acessos` como `EDITOU`.
+- O Dashboard conta só os ABERTOS; ao encerrar, o número de "em aberto" e de "prazo vencido" diminui.

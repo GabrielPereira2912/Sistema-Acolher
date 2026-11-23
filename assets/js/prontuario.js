@@ -165,10 +165,58 @@ function desenharEncaminhamentos(itens) {
       criar('span', 'item-autor', `Prazo ${dataBR(e.prazo)} · Responsável: ${e.responsavel}`)
     );
 
+    // Concluído mostra a data em que foi concluído
+    if (e.status === 'CONCLUIDO' && e.concluido_em) {
+      info.appendChild(criar('span', 'item-autor', `Concluído em ${dataBR(e.concluido_em)}`));
+    }
+
     const selo = criar('span', `selo ${vencido ? 'selo-alerta' : ''}`, vencido ? 'Vencido' : STATUS_ENCAMINHAMENTO[e.status]);
-    li.append(info, selo);
+    const direita = criar('div', 'enc-direita');
+    direita.appendChild(selo);
+
+    // Só encaminhamento aberto pode ser concluído ou cancelado
+    if (e.status === 'ABERTO') {
+      const acoes = criar('div', 'enc-acoes');
+      const btnConcluir = criar('button', 'btn btn-claro', 'Concluir');
+      const btnCancelar = criar('button', 'btn btn-claro', 'Cancelar');
+      btnConcluir.type = btnCancelar.type = 'button';
+      btnConcluir.addEventListener('click', () => encerrarEncaminhamento(e, 'concluir', acoes));
+      btnCancelar.addEventListener('click', () => {
+        if (confirm(`Cancelar o encaminhamento para "${e.destino}"?`)) {
+          encerrarEncaminhamento(e, 'cancelar', acoes);
+        }
+      });
+      acoes.append(btnConcluir, btnCancelar);
+      direita.appendChild(acoes);
+    }
+
+    li.append(info, direita);
     lista.appendChild(li);
   });
+}
+
+// Conclui ou cancela um encaminhamento aberto e recarrega a tela
+async function encerrarEncaminhamento(enc, acao, caixaDeBotoes) {
+  const botoes = caixaDeBotoes.querySelectorAll('button');
+  botoes.forEach((b) => (b.disabled = true)); // evita clique duplo
+  try {
+    const resp = await fetch(API + 'encaminhamentos.php', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id: enc.id, acao }),
+    });
+    const json = await resp.json();
+    if (resp.ok) {
+      mostrarAviso(acao === 'concluir' ? 'Encaminhamento concluído.' : 'Encaminhamento cancelado.');
+      await carregarProntuario(true);
+    } else {
+      mostrarAviso(json.erro || 'Erro ao atualizar o encaminhamento.', false);
+      await carregarProntuario(true); // ex.: alguém já encerrou; mostra o estado atual
+    }
+  } catch (err) {
+    mostrarAviso('Falha de comunicação com o servidor.', false);
+    botoes.forEach((b) => (b.disabled = false));
+  }
 }
 
 // Preenche um <select> com as opções do banco (refaz do zero para não duplicar)

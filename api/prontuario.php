@@ -70,7 +70,7 @@ $demandas = $stmt->fetchAll();
 
 // ---------- 3) Encaminhamentos do estudante (abertos primeiro) ----------
 $stmt = $pdo->prepare(
-    "SELECT d.nome AS destino, d.natureza, en.prazo, en.status, u.nome AS responsavel
+    "SELECT en.id, d.nome AS destino, d.natureza, en.prazo, en.status, en.concluido_em, u.nome AS responsavel
        FROM encaminhamentos en
        JOIN atendimentos a              ON a.id = en.atendimento_id
        JOIN destinos_encaminhamento d   ON d.id = en.destino_id

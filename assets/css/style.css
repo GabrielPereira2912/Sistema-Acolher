@@ -326,6 +326,10 @@ p.vazio { padding: 24px; }
   padding: 12px 0; border-bottom: 1px solid var(--borda);
 }
 .item-enc:last-child { border-bottom: 0; }
+.enc-direita { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; flex-shrink: 0; }
+.enc-acoes { display: flex; gap: 6px; }
+.enc-acoes .btn { padding: 6px 12px; font-size: 13px; }
+@media (max-width: 520px) { .item-enc { flex-direction: column; align-items: flex-start; } .enc-direita { align-items: flex-start; } }
 
 @media (max-width: 1240px) {
   .duas-colunas { grid-template-columns: minmax(0, 1fr); }
